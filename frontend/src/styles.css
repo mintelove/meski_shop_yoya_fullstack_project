@@ -9,9 +9,9 @@
   --panel: #ffffff;
   --text: #1e2430;
   --muted: #667085;
-  --primary: #4f6ef7;
-  --primary-light: #6d8bff;
-  --primary-glow: rgba(79, 110, 247, 0.25);
+  --primary: #10b981;
+  --primary-light: #34d399;
+  --primary-glow: rgba(16, 185, 129, 0.25);
   --danger: #dc2626;
   --success: #059669;
   --warning: #d97706;
@@ -25,9 +25,9 @@
   --panel: #1a2236;
   --text: #e2e8f0;
   --muted: #94a3b8;
-  --primary: #6d8bff;
-  --primary-light: #8ba3ff;
-  --primary-glow: rgba(109, 139, 255, 0.25);
+  --primary: #34d399;
+  --primary-light: #6ee7b7;
+  --primary-glow: rgba(52, 211, 153, 0.25);
   --danger: #ef5350;
   --success: #34d399;
   --warning: #fbbf24;
@@ -69,7 +69,7 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
+    radial-gradient(circle, rgba(16, 185, 129, 0.06) 1px, transparent 1px);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
@@ -88,7 +88,7 @@ body {
 .lp-blob--1 {
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
   top: -12%;
   left: -10%;
   animation: blob-drift-1 14s ease-in-out infinite alternate;
@@ -97,7 +97,7 @@ body {
 .lp-blob--2 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
   bottom: -10%;
   right: -8%;
   animation: blob-drift-2 16s ease-in-out infinite alternate;
@@ -106,7 +106,7 @@ body {
 .lp-blob--3 {
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
   top: 50%;
   left: 55%;
   animation: blob-drift-3 18s ease-in-out infinite alternate;
@@ -115,7 +115,7 @@ body {
 .lp-blob--4 {
   width: 220px;
   height: 220px;
-  background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.06) 0%, transparent 70%);
   top: 10%;
   right: 15%;
   animation: blob-drift-1 20s ease-in-out infinite alternate-reverse;
@@ -145,7 +145,7 @@ body {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(209, 250, 229, 0.6);
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.04),
     0 4px 12px rgba(15, 23, 42, 0.06),
@@ -171,7 +171,7 @@ body {
   font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #0891b2 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -186,7 +186,7 @@ body {
 /* Divider */
 .lp-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.15), transparent);
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.2), rgba(13, 148, 136, 0.15), transparent);
   border: none;
   margin: 0.2rem 0;
 }
@@ -218,8 +218,8 @@ body {
 }
 
 .lp-input-wrap:focus-within {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12), 0 0 16px rgba(99, 102, 241, 0.06);
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12), 0 0 16px rgba(16, 185, 129, 0.06);
   background: #ffffff;
 }
 
@@ -237,7 +237,7 @@ body {
 }
 
 .lp-input-wrap:focus-within .lp-input-icon {
-  color: #6366f1;
+  color: #10b981;
 }
 
 .lp-input-wrap input {
@@ -258,7 +258,7 @@ body {
 .lp-eye-btn {
   border: none;
   background: transparent;
-  color: #6366f1;
+  color: #10b981;
   font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
@@ -268,7 +268,7 @@ body {
 }
 
 .lp-eye-btn:hover {
-  color: #4338ca;
+  color: #059669;
 }
 
 .lp-field-error {
@@ -297,7 +297,7 @@ body {
 }
 
 .lp-check-label input[type="checkbox"] {
-  accent-color: #6366f1;
+  accent-color: #10b981;
   width: 15px;
   height: 15px;
 }
@@ -305,7 +305,7 @@ body {
 .lp-forgot-btn {
   border: none;
   background: transparent;
-  color: #0891b2;
+  color: #0d9488;
   cursor: pointer;
   padding: 0;
   font-size: 0.85rem;
@@ -315,7 +315,7 @@ body {
 }
 
 .lp-forgot-btn:hover {
-  color: #0e7490;
+  color: #059669;
 }
 
 /* Error / Success */
@@ -347,7 +347,7 @@ body {
   font-weight: 700;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #0891b2 100%);
+  background: linear-gradient(135deg, #059669 0%, #10b981 40%, #0d9488 100%);
   background-size: 200% 200%;
   animation: btn-gradient-shift 4s ease infinite;
   color: #fff;
@@ -356,7 +356,16 @@ body {
   font-family: inherit;
   letter-spacing: 0.02em;
   transition: transform 0.15s ease, opacity 0.2s ease;
-  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25), 0 4px 16px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25), 0 4px 16px rgba(16, 185, 129, 0.12);
+}
+
+.lp-submit:hover:not(:disabled) {
+  animation: lp-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes lp-pulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25), 0 4px 16px rgba(16, 185, 129, 0.12); }
+  50% { box-shadow: 0 2px 16px rgba(16, 185, 129, 0.45), 0 4px 28px rgba(16, 185, 129, 0.25); }
 }
 
 @keyframes btn-gradient-shift {
@@ -434,7 +443,7 @@ body {
   font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0d9488 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -461,9 +470,9 @@ body {
 }
 
 .sidebar-link.active {
-  background: linear-gradient(135deg, var(--primary) 0%, #6d3aed 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0d9488 100%);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 110, 247, 0.3);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
 }
 
 .content {

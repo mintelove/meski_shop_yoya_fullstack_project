@@ -12,8 +12,8 @@ const LogoIcon = () => (
     <path d="M14 28V16l8 6 8-6v12" stroke="url(#logo-grad)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     <defs>
       <linearGradient id="logo-grad" x1="0" y1="0" x2="44" y2="44">
-        <stop stopColor="#4f46e5" />
-        <stop offset="1" stopColor="#0891b2" />
+        <stop stopColor="#10b981" />
+        <stop offset="1" stopColor="#0d9488" />
       </linearGradient>
     </defs>
   </svg>
@@ -22,6 +22,22 @@ const LogoIcon = () => (
 const InputIcon = ({ path }) => (
   <svg className="lp-input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d={path} stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const EyeIcon = ({ open }) => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ display: 'block' }}>
+    {open ? (
+      <>
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.8" />
+      </>
+    ) : (
+      <>
+        <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M1 1l22 22" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </>
+    )}
   </svg>
 );
 
@@ -183,7 +199,7 @@ export const LoginPage = () => {
                 onClick={() => setShowPassword((prev) => !prev)}
                 tabIndex={-1}
               >
-                {showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+                <EyeIcon open={showPassword} />
               </button>
             </div>
             <AnimatePresence>
