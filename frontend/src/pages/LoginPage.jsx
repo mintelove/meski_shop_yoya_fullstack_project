@@ -12,8 +12,8 @@ const LogoIcon = () => (
     <path d="M14 28V16l8 6 8-6v12" stroke="url(#logo-grad)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
     <defs>
       <linearGradient id="logo-grad" x1="0" y1="0" x2="44" y2="44">
-        <stop stopColor="#818cf8" />
-        <stop offset="1" stopColor="#06b6d4" />
+        <stop stopColor="#4f46e5" />
+        <stop offset="1" stopColor="#0891b2" />
       </linearGradient>
     </defs>
   </svg>
