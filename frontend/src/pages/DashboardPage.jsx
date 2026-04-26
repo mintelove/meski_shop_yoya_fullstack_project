@@ -71,8 +71,8 @@ const TransactionChartCard = ({ title, data, type, t }) => {
                 <YAxis />
                 <Tooltip formatter={tooltipFormatter} />
                 <Legend />
-                <Bar dataKey="itemsSold" name={t("dashboard.itemsSoldLegend")} fill="#4f6ef7" radius={[5, 5, 0, 0]} />
-                <Bar dataKey="revenue" name={t("dashboard.revenueLegend")} fill="#059669" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="itemsSold" name={t("dashboard.itemsSoldLegend")} fill="#10b981" radius={[5, 5, 0, 0]} animationEasing="ease-in-out" />
+                <Bar dataKey="revenue" name={t("dashboard.revenueLegend")} fill="#0d9488" radius={[5, 5, 0, 0]} animationEasing="ease-in-out" />
               </BarChart>
             ) : (
               <LineChart data={chartData}>
@@ -85,19 +85,21 @@ const TransactionChartCard = ({ title, data, type, t }) => {
                   type="monotone"
                   dataKey="itemsSold"
                   name={t("dashboard.itemsSoldLegend")}
-                  stroke="#4f6ef7"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 5 }}
+                  stroke="#10b981"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: '#10b981' }}
+                  activeDot={{ r: 6, stroke: '#fff', strokeWidth: 2 }}
+                  animationEasing="ease-in-out"
                 />
                 <Line
                   type="monotone"
                   dataKey="revenue"
                   name={t("dashboard.revenueLegend")}
-                  stroke="#059669"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 5 }}
+                  stroke="#0d9488"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: '#0d9488' }}
+                  activeDot={{ r: 6, stroke: '#fff', strokeWidth: 2 }}
+                  animationEasing="ease-in-out"
                 />
               </LineChart>
             )}
