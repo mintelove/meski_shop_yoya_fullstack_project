@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 import { useI18n } from "../context/I18nContext";
 
@@ -76,7 +77,18 @@ export const LoginPage = () => {
 
   return (
     <div className="center-screen login-page">
-      <form className="card login-card" onSubmit={onSubmit}>
+      {/* Floating gradient orbs */}
+      <div className="login-orb login-orb--1" />
+      <div className="login-orb login-orb--2" />
+      <div className="login-orb login-orb--3" />
+
+      <motion.form
+        className="card login-card"
+        onSubmit={onSubmit}
+        initial={{ opacity: 0, y: 30, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+      >
         <h2>{t("auth.signIn")}</h2>
         <p className="muted">{t("auth.hint")}</p>
         <p className="muted login-role-hint">{t("auth.roleHint")}</p>
@@ -92,7 +104,7 @@ export const LoginPage = () => {
             onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
             autoComplete="username"
           />
-          {touched.email && fieldErrors.email ? <p className="error login-inline-error">{fieldErrors.email}</p> : null}
+          {touched.email && fieldErrors.email ? <p className="login-inline-error">{fieldErrors.email}</p> : null}
         </div>
 
         <div className="login-field">
@@ -110,7 +122,7 @@ export const LoginPage = () => {
               {showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
             </button>
           </div>
-          {touched.password && fieldErrors.password ? <p className="error login-inline-error">{fieldErrors.password}</p> : null}
+          {touched.password && fieldErrors.password ? <p className="login-inline-error">{fieldErrors.password}</p> : null}
         </div>
 
         <div className="login-options">
@@ -123,10 +135,28 @@ export const LoginPage = () => {
           </button>
         </div>
 
-        {error ? <p className="error">{error}</p> : null}
+        <AnimatePresence mode="wait">
+          {error ? (
+            <motion.p
+              key="error"
+              className="error"
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              {error}
+            </motion.p>
+          ) : null}
+        </AnimatePresence>
         {success ? <p className="login-success">{success}</p> : null}
 
-        <button className="btn login-submit-btn" type="submit" disabled={loading}>
+        <motion.button
+          className="btn login-submit-btn"
+          type="submit"
+          disabled={loading}
+          whileHover={loading ? {} : { scale: 1.02 }}
+          whileTap={loading ? {} : { scale: 0.98 }}
+        >
           {loading ? (
             <span className="login-loading-wrap">
               <span className="login-spinner" />
@@ -135,8 +165,8 @@ export const LoginPage = () => {
           ) : (
             t("auth.login")
           )}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
     </div>
   );
 };

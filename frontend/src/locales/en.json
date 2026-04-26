@@ -102,10 +102,13 @@
     "priceEtdHeader": "Price (ETB)",
     "priceHeader": "Price",
     "qtyHeader": "Qty",
+    "stockLevel": "Stock Level",
     "status": "Status",
     "actions": "Actions",
-    "lowStock": "Low stock",
-    "healthy": "Healthy"
+    "lowStock": "Low Stock",
+    "healthy": "In Stock",
+    "initialStock": "Initial Stock",
+    "sold": "Sold"
   },
   "sales": {
     "allSalesTitle": "All Sales",
@@ -118,7 +121,13 @@
     "qty": "Qty",
     "unitPrice": "Unit Price",
     "total": "Total",
-    "salesman": "Salesman"
+    "salesman": "Salesman",
+    "searchPlaceholder": "Search by product, salesman, or ID...",
+    "exportCsv": "Export CSV",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "noResults": "No matching sales found.",
+    "exportFailed": "Failed to export CSV."
   },
   "users": {
     "title": "Create User",

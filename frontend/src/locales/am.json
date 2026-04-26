@@ -102,10 +102,13 @@
     "priceEtdHeader": "ዋጋ (ETB)",
     "priceHeader": "ዋጋ",
     "qtyHeader": "ብዛት",
+    "stockLevel": "የእቃ ደረጃ",
     "status": "ሁኔታ",
     "actions": "እርምጃዎች",
     "lowStock": "ዝቅተኛ እቃ",
-    "healthy": "ጥሩ"
+    "healthy": "በእቃ ላይ",
+    "initialStock": "ዋና ክምችት",
+    "sold": "የተሸጠ"
   },
   "sales": {
     "allSalesTitle": "ሁሉም ሽያጮች",
@@ -118,7 +121,13 @@
     "qty": "ብዛት",
     "unitPrice": "የነጠላ ዋጋ",
     "total": "ጠቅላላ",
-    "salesman": "ሻጭ"
+    "salesman": "ሻጭ",
+    "searchPlaceholder": "በምርት፣ ሻጭ ወይም መለያ ፈልግ...",
+    "exportCsv": "CSV አውጣ",
+    "startDate": "የመጀመሪያ ቀን",
+    "endDate": "የመጨረሻ ቀን",
+    "noResults": "ምንም ተዛማጅ ሽያጭ አልተገኘም።",
+    "exportFailed": "CSV ማውጣት አልተሳካም።"
   },
   "users": {
     "title": "ተጠቃሚ ፍጠር",

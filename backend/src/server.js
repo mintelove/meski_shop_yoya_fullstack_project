@@ -13,6 +13,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { setSocketInstance } from "./utils/socket.js";
 import { seedAdmin } from "./seedAdmin.js";
 import { migrateLegacyCurrencyToEtb } from "./utils/currencyMigration.js";
+import { migrateInitialStock } from "./utils/migrateInitialStock.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -52,6 +53,7 @@ const port = process.env.PORT || 5000;
 
 connectDB()
   .then(migrateLegacyCurrencyToEtb)
+  .then(migrateInitialStock)
   .then(seedAdmin)
   .then(() => {
     server.listen(port, () => {

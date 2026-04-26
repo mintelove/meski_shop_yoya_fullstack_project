@@ -28,6 +28,49 @@ router.get("/", protect, async (req, res, next) => {
   }
 });
 
+router.get("/export-csv", protect, async (req, res, next) => {
+  try {
+    const { from, to } = req.query;
+    const query = req.user.role === "admin" ? {} : { salesman_id: req.user._id };
+
+    if (from || to) {
+      query.createdAt = {};
+      if (from) {
+        const startDate = new Date(from);
+        startDate.setHours(0, 0, 0, 0);
+        query.createdAt.$gte = startDate;
+      }
+      if (to) {
+        const endDate = new Date(to);
+        endDate.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = endDate;
+      }
+    }
+
+    const sales = await Sale.find(query)
+      .sort({ createdAt: -1 })
+      .populate("salesman_id", "name email");
+
+    const header = "Date,Product,Quantity,Unit Price,Total Price,Currency,Salesman";
+    const rows = sales.map((sale) => {
+      const sourceCurrency = getRecordCurrency(sale.currency);
+      const unitPrice = sourceCurrency === APP_CURRENCY ? sale.unit_price : toAppCurrency(sale.unit_price, sourceCurrency);
+      const totalPrice = sourceCurrency === APP_CURRENCY ? sale.total_price : toAppCurrency(sale.total_price, sourceCurrency);
+      const date = new Date(sale.createdAt).toISOString().slice(0, 10);
+      const productName = `"${(sale.product_name || "").replace(/"/g, '""')}"`;
+      const salesman = `"${(sale.salesman_id?.name || "N/A").replace(/"/g, '""')}"`;
+      return `${date},${productName},${sale.quantity},${unitPrice.toFixed(2)},${totalPrice.toFixed(2)},${APP_CURRENCY},${salesman}`;
+    });
+
+    const csv = [header, ...rows].join("\n");
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", "attachment; filename=sales_export.csv");
+    return res.send(csv);
+  } catch (error) {
+    return next(error);
+  }
+});
+
 router.post(
   "/",
   protect,

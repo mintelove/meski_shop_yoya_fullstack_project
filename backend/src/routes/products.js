@@ -48,7 +48,12 @@ router.post(
   handleValidation,
   async (req, res, next) => {
     try {
-      const product = await Product.create({ ...req.body, currency: APP_CURRENCY });
+      const qty = Number(req.body.quantity) || 0;
+      const product = await Product.create({
+        ...req.body,
+        currency: APP_CURRENCY,
+        initialStock: qty
+      });
       emitStockUpdate({ type: "product-created", product });
       return res.status(201).json(product);
     } catch (error) {
@@ -70,10 +75,24 @@ router.put(
   handleValidation,
   async (req, res, next) => {
     try {
-      const product = await Product.findByIdAndUpdate(req.params.id, { ...req.body, currency: APP_CURRENCY }, { new: true });
-      if (!product) {
+      const existing = await Product.findById(req.params.id);
+      if (!existing) {
         return res.status(404).json({ message: "Product not found." });
       }
+
+      const updateData = { ...req.body, currency: APP_CURRENCY };
+
+      // If quantity increased (restocking), increase initialStock by the same delta
+      if (req.body.quantity !== undefined) {
+        const newQty = Number(req.body.quantity);
+        const oldQty = existing.quantity;
+        if (newQty > oldQty) {
+          const delta = newQty - oldQty;
+          updateData.initialStock = (existing.initialStock || 0) + delta;
+        }
+      }
+
+      const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
       emitStockUpdate({ type: "product-updated", product });
       return res.json(product);
     } catch (error) {

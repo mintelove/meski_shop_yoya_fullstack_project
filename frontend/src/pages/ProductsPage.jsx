@@ -13,6 +13,38 @@ const defaultForm = {
   lowStockThreshold: 10
 };
 
+const StockBar = ({ current, initial, threshold, t }) => {
+  const effectiveInitial = initial || current || 1;
+  const sold = Math.max(0, effectiveInitial - current);
+  const pct = Math.min(100, Math.round((current / effectiveInitial) * 100));
+  const isLow = current <= (threshold ?? 10);
+  const isWarning = !isLow && pct <= 35;
+
+  let barClass = "stock-bar-fill stock-bar-fill--healthy";
+  let statusClass = "stock-status stock-status--healthy";
+  let statusText = t("products.healthy");
+
+  if (isLow) {
+    barClass = "stock-bar-fill stock-bar-fill--danger";
+    statusClass = "stock-status stock-status--danger";
+    statusText = t("products.lowStock");
+  } else if (isWarning) {
+    barClass = "stock-bar-fill stock-bar-fill--warning";
+    statusClass = "stock-status stock-status--warning";
+    statusText = t("products.lowStock");
+  }
+
+  return (
+    <div className="stock-display">
+      <span className="stock-fraction">{sold} / {effectiveInitial}</span>
+      <div className="stock-bar">
+        <div className={barClass} style={{ width: `${pct}%` }} />
+      </div>
+      <span className={statusClass}>{statusText}</span>
+    </div>
+  );
+};
+
 export const ProductsPage = () => {
   const { user } = useAuth();
   const { t } = useI18n();
@@ -122,7 +154,7 @@ export const ProductsPage = () => {
       )}
 
       <div className="card">
-        <a className="btn secondary" href={`data:text/csv;charset=utf-8,${encodeURIComponent(csvExport)}`} download="products.csv">
+        <a className="btn secondary" href={`data:text/csv;charset=utf-8,${encodeURIComponent(csvExport)}`} download="products.csv" style={{ display: 'inline-block', marginBottom: '0.8rem', textDecoration: 'none' }}>
           {t("products.exportCsv")}
         </a>
         <table>
@@ -131,34 +163,44 @@ export const ProductsPage = () => {
               <th>{t("products.name")}</th>
               <th>{t("products.category")}</th>
               <th>{t("products.priceHeader")}</th>
-              <th>{t("products.qtyHeader")}</th>
+              <th>{t("products.stockLevel")}</th>
               <th>{t("products.status")}</th>
               {isAdmin ? <th>{t("products.actions")}</th> : null}
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => {
-              const isLow = product.quantity <= (product.lowStockThreshold ?? 10);
-              return (
-                <tr key={product._id}>
-                  <td>{product.name}</td>
-                  <td>{product.category}</td>
-                  <td>{formatCurrency(product.price)}</td>
-                  <td>{product.quantity}</td>
-                  <td>{isLow ? t("products.lowStock") : t("products.healthy")}</td>
-                  {isAdmin ? (
-                    <td>
-                      <button className="btn secondary" onClick={() => onEdit(product)}>
-                        {t("common.edit")}
-                      </button>
-                      <button className="btn btn-danger" onClick={() => onDelete(product._id)}>
-                        {t("common.delete")}
-                      </button>
-                    </td>
-                  ) : null}
-                </tr>
-              );
-            })}
+            {products.map((product) => (
+              <tr key={product._id}>
+                <td>{product.name}</td>
+                <td>{product.category}</td>
+                <td>{formatCurrency(product.price)}</td>
+                <td>
+                  <StockBar
+                    current={product.quantity}
+                    initial={product.initialStock}
+                    threshold={product.lowStockThreshold}
+                    t={t}
+                  />
+                </td>
+                <td>
+                  {product.quantity <= (product.lowStockThreshold ?? 10) ? (
+                    <span className="stock-status stock-status--danger">{t("products.lowStock")}</span>
+                  ) : (
+                    <span className="stock-status stock-status--healthy">{t("products.healthy")}</span>
+                  )}
+                </td>
+                {isAdmin ? (
+                  <td>
+                    <button className="btn secondary" onClick={() => onEdit(product)}>
+                      {t("common.edit")}
+                    </button>
+                    <button className="btn btn-danger" onClick={() => onDelete(product._id)} style={{ marginLeft: '0.4rem' }}>
+                      {t("common.delete")}
+                    </button>
+                  </td>
+                ) : null}
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

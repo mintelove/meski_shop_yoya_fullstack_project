@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import {
   Bar,
   BarChart,
@@ -17,12 +18,27 @@ import { useSocket } from "../hooks/useSocket";
 import { formatCurrency } from "../utils/currency";
 import { useI18n } from "../context/I18nContext";
 
-const StatCard = ({ title, value, subtitle }) => (
-  <div className="card stat-card dashboard-stat-card">
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.4, ease: "easeOut" }
+  })
+};
+
+const StatCard = ({ title, value, subtitle, index }) => (
+  <motion.div
+    className="card stat-card dashboard-stat-card"
+    custom={index}
+    initial="hidden"
+    animate="visible"
+    variants={cardVariants}
+  >
     <p className="dashboard-stat-title">{title}</p>
     <p className="dashboard-stat-value">{value}</p>
     {subtitle ? <p className="muted dashboard-stat-subtitle">{subtitle}</p> : null}
-  </div>
+  </motion.div>
 );
 
 const TransactionChartCard = ({ title, data, type, t }) => {
@@ -36,7 +52,12 @@ const TransactionChartCard = ({ title, data, type, t }) => {
   };
 
   return (
-    <div className="card dashboard-chart-card">
+    <motion.div
+      className="card dashboard-chart-card"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: 0.3 }}
+    >
       <h4>{title}</h4>
       {!hasData ? (
         <p className="muted">{t("dashboard.noTransactions")}</p>
@@ -50,8 +71,8 @@ const TransactionChartCard = ({ title, data, type, t }) => {
                 <YAxis />
                 <Tooltip formatter={tooltipFormatter} />
                 <Legend />
-                <Bar dataKey="itemsSold" name={t("dashboard.itemsSoldLegend")} fill="#335dff" radius={[5, 5, 0, 0]} />
-                <Bar dataKey="revenue" name={t("dashboard.revenueLegend")} fill="#16a34a" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="itemsSold" name={t("dashboard.itemsSoldLegend")} fill="#4f6ef7" radius={[5, 5, 0, 0]} />
+                <Bar dataKey="revenue" name={t("dashboard.revenueLegend")} fill="#059669" radius={[5, 5, 0, 0]} />
               </BarChart>
             ) : (
               <LineChart data={chartData}>
@@ -64,7 +85,7 @@ const TransactionChartCard = ({ title, data, type, t }) => {
                   type="monotone"
                   dataKey="itemsSold"
                   name={t("dashboard.itemsSoldLegend")}
-                  stroke="#335dff"
+                  stroke="#4f6ef7"
                   strokeWidth={2}
                   dot={{ r: 3 }}
                   activeDot={{ r: 5 }}
@@ -73,7 +94,7 @@ const TransactionChartCard = ({ title, data, type, t }) => {
                   type="monotone"
                   dataKey="revenue"
                   name={t("dashboard.revenueLegend")}
-                  stroke="#16a34a"
+                  stroke="#059669"
                   strokeWidth={2}
                   dot={{ r: 3 }}
                   activeDot={{ r: 5 }}
@@ -83,7 +104,7 @@ const TransactionChartCard = ({ title, data, type, t }) => {
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
@@ -215,15 +236,28 @@ export const DashboardPage = () => {
 
   return (
     <div className="stack">
-      <h2>{user?.role === "admin" ? t("dashboard.adminTitle") : t("dashboard.myTitle")}</h2>
+      <motion.h2
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.35 }}
+      >
+        {user?.role === "admin" ? t("dashboard.adminTitle") : t("dashboard.myTitle")}
+      </motion.h2>
       {error ? <p className="error">{error}</p> : null}
+
       <div className="grid dashboard-metrics-grid">
-        {metrics.map((metric) => (
-          <StatCard key={metric.title} title={metric.title} value={metric.value} subtitle={metric.subtitle} />
+        {metrics.map((metric, i) => (
+          <StatCard key={metric.title} title={metric.title} value={metric.value} subtitle={metric.subtitle} index={i} />
         ))}
       </div>
+
       <div className="grid dashboard-chart-grid">
-        <div className="card row-between dashboard-chart-controls">
+        <motion.div
+          className="card row-between dashboard-chart-controls"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
           <h4>{t("dashboard.chartRangeTitle")}</h4>
           <div className="form-inline">
             <button className="btn secondary" type="button" onClick={() => setWeekOffset((prev) => prev + 1)}>
@@ -233,12 +267,17 @@ export const DashboardPage = () => {
               {t("dashboard.nextWeek")}
             </button>
           </div>
-        </div>
+        </motion.div>
         <TransactionChartCard title={t("dashboard.dailyTrend")} data={data?.dailyWeekTrend || []} type="daily" t={t} />
         <TransactionChartCard title={t("dashboard.weeklyPerformance")} data={data?.weeklyPerformance || []} type="weekly" t={t} />
       </div>
 
-      <div className="card stack">
+      <motion.div
+        className="card stack"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+      >
         <h3>{t("dashboard.salesTrackingTitle")}</h3>
         <div className="form dashboard-filter-row">
           <label className="dashboard-filter-group">
@@ -273,14 +312,17 @@ export const DashboardPage = () => {
           <StatCard
             title={t("dashboard.totalItemsSold")}
             value={trackingLoading ? t("common.loading") : trackingData?.summary?.totalItemsSold || 0}
+            index={0}
           />
           <StatCard
             title={t("dashboard.filteredRevenue")}
             value={trackingLoading ? t("common.loading") : formatCurrency(trackingData?.summary?.totalRevenue || 0)}
+            index={1}
           />
           <StatCard
             title={t("dashboard.filteredTransactions")}
             value={trackingLoading ? t("common.loading") : trackingData?.summary?.totalTransactions || 0}
+            index={2}
           />
         </div>
 
@@ -306,7 +348,7 @@ export const DashboardPage = () => {
             </tbody>
           </table>
         ) : null}
-      </div>
+      </motion.div>
     </div>
   );
 };
