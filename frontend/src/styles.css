@@ -142,14 +142,14 @@ body {
   z-index: 2;
   width: min(100%, 440px);
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.85);
+  background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid rgba(209, 250, 229, 0.6);
+  border: 1px solid rgba(209, 250, 229, 0.15);
   box-shadow:
-    0 1px 2px rgba(15, 23, 42, 0.04),
-    0 4px 12px rgba(15, 23, 42, 0.06),
-    0 20px 48px rgba(15, 23, 42, 0.08);
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    0 20px 48px rgba(0, 0, 0, 0.2);
   padding: 2.2rem 2rem;
 }
 
@@ -180,7 +180,7 @@ body {
 .lp-subtitle {
   margin: 0.15rem 0 0;
   font-size: 0.85rem;
-  color: #64748b;
+  color: rgba(203, 213, 225, 0.7);
 }
 
 /* Divider */
@@ -203,24 +203,24 @@ body {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: #64748b;
+  color: rgba(148, 163, 184, 0.7);
 }
 
 .lp-input-wrap {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 12px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
   padding: 0.1rem 0.6rem;
   transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .lp-input-wrap:focus-within {
   border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12), 0 0 16px rgba(16, 185, 129, 0.06);
-  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18), 0 0 16px rgba(16, 185, 129, 0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .lp-input-wrap--error {
@@ -231,7 +231,7 @@ body {
 .lp-input-icon {
   width: 18px;
   height: 18px;
-  color: #94a3b8;
+  color: rgba(148, 163, 184, 0.5);
   flex-shrink: 0;
   transition: color 0.25s ease;
 }
@@ -246,13 +246,13 @@ body {
   outline: none;
   padding: 0.72rem 0.15rem;
   background: transparent;
-  color: #1e293b;
+  color: #f1f5f9;
   font-size: 0.95rem;
   font-family: inherit;
 }
 
 .lp-input-wrap input::placeholder {
-  color: #94a3b8;
+  color: rgba(100, 116, 139, 0.6);
 }
 
 .lp-eye-btn {
@@ -268,13 +268,13 @@ body {
 }
 
 .lp-eye-btn:hover {
-  color: #059669;
+  color: #6ee7b7;
 }
 
 .lp-field-error {
   margin: 0;
   font-size: 0.78rem;
-  color: #ef4444;
+  color: #fca5a5;
   overflow: hidden;
 }
 
@@ -291,7 +291,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: #475569;
+  color: rgba(203, 213, 225, 0.7);
   font-size: 0.85rem;
   cursor: pointer;
 }
@@ -305,7 +305,7 @@ body {
 .lp-forgot-btn {
   border: none;
   background: transparent;
-  color: #0d9488;
+  color: #34d399;
   cursor: pointer;
   padding: 0;
   font-size: 0.85rem;
@@ -315,7 +315,7 @@ body {
 }
 
 .lp-forgot-btn:hover {
-  color: #059669;
+  color: #6ee7b7;
 }
 
 /* Error / Success */
@@ -323,9 +323,9 @@ body {
   margin: 0;
   padding: 0.6rem 0.8rem;
   border-radius: 8px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
   font-size: 0.88rem;
 }
 
@@ -333,9 +333,9 @@ body {
   margin: 0;
   padding: 0.6rem 0.8rem;
   border-radius: 8px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  color: #16a34a;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.2);
+  color: #6ee7b7;
   font-size: 0.88rem;
 }
 
@@ -401,7 +401,7 @@ body {
 .lp-role-hint {
   text-align: center;
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: rgba(100, 116, 139, 0.6);
   margin: 0;
 }
 
