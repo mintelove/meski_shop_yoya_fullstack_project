@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --bg: #0d2b85;
+  --bg: #fafbff;
   --panel: #ffffff;
   --text: #1e2430;
   --muted: #0b4ddb;
@@ -15,13 +15,14 @@
   --danger: #dc2626;
   --success: #059669;
   --warning: #d97706;
-  --border: #1851ed;
+  --border: #eff2fd;
   --card-shadow: 0 1px 4px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.04);
   --card-hover-shadow: 0 8px 32px rgba(15, 23, 42, 0.10);
   /* Glass surfaces */
   --card-bg: rgba(255, 255, 255, 0.8);
   /* Dashboard card green-lemon (lime) */
-  --dashboard-card-bg: #d1e406;
+  --dashboard-card-bg: #f8f9ea;
+  --dashboard-card-border-color: #218838;
   --card-border: 1px solid rgba(4, 40, 88, 0.8);
   --card-text: #1e2430;
   --sidebar-bg: rgb(254, 253, 255);
@@ -59,12 +60,13 @@
   /* Glass surfaces – dark */
   --card-bg: rgba(30, 41, 59, 0.7);
   /* Dashboard card green-lemon (lime) – dark */
-  --dashboard-card-bg: rgba(223, 255, 0, 0.18);
-  --card-border: 1px solid rgba(255, 255, 255, 0.1);
+  --dashboard-card-bg: rgba(22, 27, 49, 0.784);
+  --dashboard-card-border-color: #2ECC71;
+  --card-border: 1px solid rgba(254, 7, 7, 0.1);
   --card-text: #f1f5f9;
   --sidebar-bg: rgba(15, 23, 42, 0.92);
   --sidebar-text: #f1f5f9;
-  --sidebar-muted: rgba(148, 163, 184, 0.7);
+  --sidebar-muted: rgba(184, 155, 148, 0.7);
   --sidebar-link: rgba(226, 232, 240, 0.8);
   --sidebar-link-hover-bg: rgba(16, 185, 129, 0.15);
   --content-bg: #0f172a;
@@ -76,7 +78,7 @@
   --table-text: #e2e8f0;
   --table-head: rgba(148, 163, 184, 0.6);
   --table-hover: rgba(16, 185, 129, 0.06);
-  --muted-color: rgba(148, 163, 184, 0.7);
+  --muted-color: rgba(241, 247, 255, 0.944);
   --error-color: #fca5a5;
 }
 
@@ -661,6 +663,9 @@ body {
   overflow: hidden;
   cursor: default;
   background: var(--dashboard-card-bg);
+  border-radius: 24px;
+  border: 2px solid var(--dashboard-card-border-color);
+  transition: border-color 0.5s ease;
 }
 
 .dashboard-stat-card::before {
@@ -733,6 +738,9 @@ body {
 .dashboard-chart-card {
   overflow: hidden;
   background: var(--dashboard-card-bg);
+  border-radius: 24px;
+  border: 2px solid var(--dashboard-card-border-color);
+  transition: border-color 0.5s ease;
 }
 
 .dashboard-chart-card h4 {
@@ -743,6 +751,9 @@ body {
 .dashboard-chart-controls {
   grid-column: 1 / -1;
   background: var(--dashboard-card-bg);
+  border-radius: 24px;
+  border: 2px solid var(--dashboard-card-border-color);
+  transition: border-color 0.5s ease;
 }
 
 .dashboard-chart-wrap {
@@ -766,6 +777,9 @@ body {
 
 .dashboard-tracking-card {
   background: var(--dashboard-card-bg);
+  border-radius: 24px;
+  border: 2px solid var(--dashboard-card-border-color);
+  transition: border-color 0.5s ease;
 }
 
 /* =========================================================
