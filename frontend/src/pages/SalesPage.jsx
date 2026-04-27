@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../hooks/useSocket";
@@ -18,6 +18,13 @@ const DownloadIcon = () => (
   </svg>
 );
 
+const CheckmarkIcon = () => (
+  <svg className="sale-success-checkmark" viewBox="0 0 52 52" fill="none" aria-hidden="true">
+    <circle cx="26" cy="26" r="24" stroke="#28a745" strokeWidth="3" fill="none" />
+    <path className="sale-success-check-path" d="M14 27l8 8 16-16" stroke="#28a745" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+  </svg>
+);
+
 export const SalesPage = () => {
   const { user } = useAuth();
   const { t, language } = useI18n();
@@ -28,6 +35,8 @@ export const SalesPage = () => {
   const [search, setSearch] = useState("");
   const [exportFrom, setExportFrom] = useState("");
   const [exportTo, setExportTo] = useState("");
+  const [saleSuccess, setSaleSuccess] = useState(false);
+  const successTimer = useRef(null);
 
   const fetchData = useCallback(async () => {
     const [productsRes, salesRes] = await Promise.all([api.get("/products"), api.get("/sales")]);
@@ -42,6 +51,12 @@ export const SalesPage = () => {
     fetchData();
   }, [fetchData]);
 
+  useEffect(() => {
+    return () => {
+      if (successTimer.current) clearTimeout(successTimer.current);
+    };
+  }, []);
+
   useSocket("stock:update", fetchData);
 
   const onSale = async (e) => {
@@ -54,6 +69,11 @@ export const SalesPage = () => {
       });
       setForm((prev) => ({ ...prev, quantity: 1 }));
       fetchData();
+
+      // Trigger success state for 3 seconds
+      setSaleSuccess(true);
+      if (successTimer.current) clearTimeout(successTimer.current);
+      successTimer.current = setTimeout(() => setSaleSuccess(false), 3000);
     } catch (err) {
       setError(err.response?.data?.message || t("sales.failedComplete"));
     }
@@ -106,7 +126,16 @@ export const SalesPage = () => {
     <div className="stack">
       <h2>{user?.role === "admin" ? t("sales.allSalesTitle") : t("sales.mySalesTitle")}</h2>
 
-      <form className="card form-inline" onSubmit={onSale}>
+      <form
+        className={`card form-inline sale-form-card${saleSuccess ? " sale-form-card--success" : ""}`}
+        onSubmit={onSale}
+      >
+        {saleSuccess && (
+          <div className="sale-success-overlay">
+            <CheckmarkIcon />
+            <p className="sale-success-text">Transaction Successful</p>
+          </div>
+        )}
         <select value={form.productId} onChange={(e) => setForm({ ...form, productId: e.target.value })}>
           {products.map((p) => (
             <option key={p._id} value={p._id}>
@@ -121,7 +150,7 @@ export const SalesPage = () => {
           value={form.quantity}
           onChange={(e) => setForm({ ...form, quantity: e.target.value })}
         />
-        <button className="btn" type="submit">
+        <button className="btn" type="submit" disabled={saleSuccess}>
           {t("sales.completeSale")}
         </button>
       </form>

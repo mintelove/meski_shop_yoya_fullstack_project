@@ -854,6 +854,103 @@ body {
 }
 
 /* =========================================================
+   SALES – Success State Transition
+   ========================================================= */
+
+.sale-form-card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.5s ease;
+}
+
+.sale-form-card--success {
+  border: 2px solid #28a745 !important;
+}
+
+/* Full overlay that suspends the standard layout */
+.sale-success-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: inherit;
+  animation: sale-overlay-fade-in 0.35s ease-out;
+}
+
+[data-theme="dark"] .sale-success-overlay {
+  background: rgba(15, 23, 42, 0.92);
+}
+
+@keyframes sale-overlay-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Checkmark icon with motion-blur effect */
+.sale-success-checkmark {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 0 8px rgba(40, 167, 69, 0.5)) blur(0px);
+  animation: sale-checkmark-appear 0.5s ease-out;
+}
+
+.sale-success-check-path {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: sale-check-draw 0.6s 0.25s ease-out forwards;
+}
+
+@keyframes sale-checkmark-appear {
+  0% {
+    transform: scale(0.3);
+    filter: drop-shadow(0 0 8px rgba(40, 167, 69, 0.5)) blur(4px);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(40, 167, 69, 0.6)) blur(1px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(40, 167, 69, 0.5)) blur(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes sale-check-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* "Transaction Successful" text – fade-in-up */
+.sale-success-text {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #28a745;
+  letter-spacing: 0.02em;
+  animation: sale-text-fade-in-up 0.5s 0.3s ease-out both;
+}
+
+@keyframes sale-text-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
    SALES – Search Bar
    ========================================================= */
 
