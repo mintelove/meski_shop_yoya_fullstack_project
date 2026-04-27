@@ -113,7 +113,7 @@ body {
   position: fixed;
   inset: 0;
   z-index: -1;
-  background: url('./picture/bgg.png') center / cover no-repeat;
+  background: url('./picture/bgg.jpg') center / cover no-repeat;
   background-attachment: fixed;
   width: 100vw;
   height: 100vh;
