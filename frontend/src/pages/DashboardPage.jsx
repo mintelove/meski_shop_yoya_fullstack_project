@@ -34,6 +34,16 @@ const StatCard = ({ title, value, subtitle, index }) => (
     initial="hidden"
     animate="visible"
     variants={cardVariants}
+    whileHover={{
+      scale: 1.03,
+      borderColor: "rgba(16, 185, 129, 0.4)",
+      boxShadow: "0 0 20px rgba(16, 185, 129, 0.15), 0 8px 32px rgba(0, 0, 0, 0.2)"
+    }}
+    whileTap={{
+      scale: 0.97,
+      background: "rgba(16, 185, 129, 0.15)"
+    }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
   >
     <p className="dashboard-stat-title">{title}</p>
     <p className="dashboard-stat-value">{value}</p>
@@ -275,7 +285,7 @@ export const DashboardPage = () => {
       </div>
 
       <motion.div
-        className="card stack"
+        className="card stack dashboard-tracking-card"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.4 }}
