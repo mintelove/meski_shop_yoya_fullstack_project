@@ -133,6 +133,7 @@ export const DashboardPage = () => {
   const [rangeTo, setRangeTo] = useState("");
   const [activeFilter, setActiveFilter] = useState("none");
   const [weekOffset, setWeekOffset] = useState(0);
+  const [lowStockItems, setLowStockItems] = useState([]);
 
   const fetchDashboard = useCallback(async () => {
     const endpoint = user?.role === "admin" ? "/dashboard/admin" : "/dashboard/salesman";
@@ -168,12 +169,28 @@ export const DashboardPage = () => {
     [t]
   );
 
+  const fetchLowStock = useCallback(async () => {
+    try {
+      const res = await api.get("/products");
+      const items = (res.data || []).filter(
+        (p) => p.quantity < 2
+      );
+      setLowStockItems(items);
+    } catch {
+      // silent – alert cards are supplementary
+    }
+  }, []);
+
   useEffect(() => {
     fetchDashboard();
     fetchSalesTracking();
-  }, [fetchDashboard, fetchSalesTracking]);
+    fetchLowStock();
+  }, [fetchDashboard, fetchSalesTracking, fetchLowStock]);
 
-  useSocket("stock:update", fetchDashboard);
+  useSocket("stock:update", () => {
+    fetchDashboard();
+    fetchLowStock();
+  });
 
   const metrics = useMemo(() => {
     if (!data) return [];
@@ -256,6 +273,45 @@ export const DashboardPage = () => {
         {user?.role === "admin" ? t("dashboard.adminTitle") : t("dashboard.myTitle")}
       </motion.h2>
       {error ? <p className="error">{error}</p> : null}
+
+      {/* Low-Stock Alert Cards – pinned to top */}
+      {lowStockItems.length > 0 && (
+        <div className="low-stock-alerts-grid">
+          {lowStockItems.map((item, i) => {
+            const isCritical = item.quantity <= 1 && item.quantity > 0;
+            const isOutOfStock = item.quantity === 0;
+            const cardClass = [
+              "card low-stock-alert-card",
+              isCritical && "low-stock-alert-card--critical",
+              isOutOfStock && "low-stock-alert-card--out-of-stock"
+            ].filter(Boolean).join(" ");
+
+            return (
+              <motion.div
+                key={item._id}
+                className={cardClass}
+                custom={i}
+                initial="hidden"
+                animate="visible"
+                variants={cardVariants}
+              >
+                {(isCritical || isOutOfStock) && (
+                  <span className="low-stock-priority-badge">
+                    {isOutOfStock
+                      ? t("dashboard.outOfStock")
+                      : t("dashboard.criticalLeft")}
+                  </span>
+                )}
+                <p className="low-stock-alert-name">{item.name}</p>
+                <p className="low-stock-alert-count">{item.quantity}</p>
+                <button className="low-stock-restock-btn" type="button">
+                  {t("dashboard.restockNow")}
+                </button>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="grid dashboard-metrics-grid">
         {metrics.map((metric, i) => (

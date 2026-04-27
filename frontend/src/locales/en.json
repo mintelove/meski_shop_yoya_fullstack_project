@@ -89,7 +89,11 @@
     "filteredRevenue": "Total Sales Amount (ETB)",
     "filteredTransactions": "Transactions",
     "noDataFound": "No data found.",
-    "product": "Product"
+    "product": "Product",
+    "thresholdLabel": "Threshold",
+    "restockNow": "Restock Now",
+    "criticalLeft": "CRITICAL: 1 LEFT",
+    "outOfStock": "OUT OF STOCK"
   },
   "products": {
     "title": "Products",

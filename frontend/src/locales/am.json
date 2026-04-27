@@ -89,7 +89,11 @@
     "filteredRevenue": "ጠቅላላ የሽያጭ መጠን (ETB)",
     "filteredTransactions": "ግብይቶች",
     "noDataFound": "ምንም መረጃ አልተገኘም።",
-    "product": "ምርት"
+    "product": "ምርት",
+    "thresholdLabel": "ገደብ",
+    "restockNow": "አሁን ሙላ",
+    "criticalLeft": "አሳሳቢ: 1 ቀረ",
+    "outOfStock": "እቃ አልቋል"
   },
   "products": {
     "title": "ምርቶች",
