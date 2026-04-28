@@ -1,4 +1,5 @@
 import { useI18n } from "../context/I18nContext";
+import logo from "../picture/logo.jpg";
 
 export const AboutUs = () => {
   const { t } = useI18n();
@@ -8,7 +9,7 @@ export const AboutUs = () => {
       {/* Hero Section */}
       <div className="about-hero">
         <div className="about-logo-wrap">
-          <div className="about-logo-text">MM</div>
+          <img src={logo} alt="MaM App Studio" className="about-logo" />
         </div>
         <h1 className="about-company-name">{t("about.companyName")}</h1>
         <p className="about-tagline">{t("about.tagline")}</p>
