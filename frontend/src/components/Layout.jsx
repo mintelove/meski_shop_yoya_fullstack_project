@@ -45,6 +45,9 @@ export const Layout = () => {
               {t("nav.settings")}
             </Link>
           )}
+          <Link to="/about" className={linkClass(location.pathname === "/about")}>
+            {t("nav.about")}
+          </Link>
         </nav>
         <button className="btn secondary" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
           {theme === "light" ? t("common.darkMode") : t("common.lightMode")}

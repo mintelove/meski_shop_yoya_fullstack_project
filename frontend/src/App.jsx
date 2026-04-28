@@ -8,6 +8,7 @@ import { ProductsPage } from "./pages/ProductsPage";
 import { SalesPage } from "./pages/SalesPage";
 import { UsersPage } from "./pages/UsersPage";
 import { AdminSettingsPage } from "./pages/AdminSettingsPage";
+import { AboutUs } from "./pages/AboutUs";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="about" element={<AboutUs />} />
         </Route>
 
         <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />

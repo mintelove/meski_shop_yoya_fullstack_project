@@ -22,7 +22,8 @@
     "products": "ምርቶች",
     "sales": "ሽያጭ",
     "users": "ተጠቃሚዎች",
-    "settings": "ቅንብሮች"
+    "settings": "ቅንብሮች",
+    "about": "ስለ እኛ"
   },
   "app": {
     "title": "የሱቅ ማኔጀር"
@@ -170,5 +171,14 @@
     "resetting": "እየዳገም በማስጀመር ላይ...",
     "resetSuccess": "የዳታቤዝ ዳግም ማስጀመር በትክክል ተጠናቋል።",
     "resetFailed": "ዳታቤዙን ዳግም ማስጀመር አልተሳካም።"
+  },
+  "about": {
+    "companyName": "MaM App Studio",
+    "tagline": "ለንግድዎ ዘመናዊ መፍትሄዎችን እንሰራለን",
+    "email": "ኢሜይል",
+    "phone": "ስልክ",
+    "developer": "ገንቢ",
+    "developerDesc": "በMaM App Studio በፍቅር የተሰራ — ከፍተኛ ጥራት ያላቸው ዘመናዊ መተግበሪያዎችን እናቀርባለን።",
+    "rights": "ሁሉም መብቶች የተጠበቁ ናቸው።"
   }
 }

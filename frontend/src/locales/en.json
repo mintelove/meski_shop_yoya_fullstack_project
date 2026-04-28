@@ -22,7 +22,8 @@
     "products": "Products",
     "sales": "Sales",
     "users": "Users",
-    "settings": "Settings"
+    "settings": "Settings",
+    "about": "About Us"
   },
   "app": {
     "title": "Shop Manager"
@@ -170,5 +171,14 @@
     "resetting": "Resetting...",
     "resetSuccess": "Database reset completed successfully.",
     "resetFailed": "Failed to reset database."
+  },
+  "about": {
+    "companyName": "MaM App Studio",
+    "tagline": "Crafting modern solutions for your business",
+    "email": "Email",
+    "phone": "Phone",
+    "developer": "Developer",
+    "developerDesc": "Built with passion by MaM App Studio — delivering premium, modern applications.",
+    "rights": "All rights reserved."
   }
 }
