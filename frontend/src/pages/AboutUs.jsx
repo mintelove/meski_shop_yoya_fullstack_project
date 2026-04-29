@@ -34,6 +34,9 @@ export const AboutUs = () => {
           <a href="mailto:mintesnotmilkias0@gmail.com" className="about-card-link">
             mintesnotmilkias0@gmail.com
           </a>
+          <a href="mailto:mammy2012m@gmail.com" className="about-card-link">
+            mammy2012m@gmail.com
+          </a>
         </div>
 
         {/* Phone Card */}
