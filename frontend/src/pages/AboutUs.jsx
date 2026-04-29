@@ -31,11 +31,8 @@ export const AboutUs = () => {
             </svg>
           </div>
           <h3 className="about-card-title">{t("about.email")}</h3>
-          <a href="mailto:mintesnotmikias0@gmail.com" className="about-card-link">
-            mintesnotmikias0@gmail.com
-          </a>
-          <a href="mailto:mammy2012m@gmail.com" className="about-card-link">
-            mammy2012m@gmail.com
+          <a href="mailto:mintesnotmilkias0@gmail.com" className="about-card-link">
+            mintesnotmilkias0@gmail.com
           </a>
         </div>
 
