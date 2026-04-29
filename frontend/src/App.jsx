@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -10,9 +11,22 @@ import { UsersPage } from "./pages/UsersPage";
 import { AdminSettingsPage } from "./pages/AdminSettingsPage";
 import { AboutUs } from "./pages/AboutUs";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
+import { Preloader } from "./components/Preloader";
 
 function App() {
   const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <Preloader />;
+  }
 
   return (
     <>
