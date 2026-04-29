@@ -11,19 +11,29 @@ export const Preloader = () => {
         exit={{ opacity: 0 }}
       >
         <div className="preloader-ring"></div>
-        <motion.div
-          className="preloader-logo-wrap"
-          animate={{ 
-            scale: [1, 1.05, 1],
-          }}
-          transition={{ 
-            duration: 2, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-        >
-          <img src={logo} alt="MaM Logo" className="preloader-logo" />
-        </motion.div>
+        <div className="preloader-content-stack">
+          <motion.div
+            className="preloader-logo-wrap"
+            animate={{ 
+              scale: [1, 1.05, 1],
+            }}
+            transition={{ 
+              duration: 2, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+          >
+            <img src={logo} alt="MaM Logo" className="preloader-logo" />
+          </motion.div>
+          
+          <motion.p 
+            className="preloader-text"
+            animate={{ opacity: [0.4, 1, 0.4] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            Loading....
+          </motion.p>
+        </div>
       </motion.div>
     </div>
   );

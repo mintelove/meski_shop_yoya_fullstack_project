@@ -1532,6 +1532,27 @@ tbody tr:hover {
   object-fit: cover;
 }
 
+.preloader-content-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  z-index: 1;
+}
+
+.preloader-text {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #475569; /* slate-600 */
+}
+
+[data-theme="dark"] .preloader-text {
+  color: rgba(254, 252, 232, 0.7); /* yellow-100/70 */
+}
+
 @keyframes preloader-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
