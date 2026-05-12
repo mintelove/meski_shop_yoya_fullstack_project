@@ -182,6 +182,16 @@ export const SalesPage = () => {
           <label>{t("sales.endDate")}</label>
           <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setDateFilter(""); }} />
         </div>
+        <div className="csv-export-group" style={{ alignSelf: "flex-end" }}>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ padding: "0.5rem 1rem", fontSize: "0.85rem", background: "#64748b", color: "#fff", borderRadius: "8px", border: "none", cursor: "pointer" }}
+            onClick={() => { setDateFilter(""); setStartDate(""); setEndDate(""); }}
+          >
+            {t("dashboard.resetFilter") || "Reset"}
+          </button>
+        </div>
         <div className="row" style={{ gap: "0.5rem", marginLeft: "auto" }}>
           <button type="button" className="csv-export-btn" onClick={() => onExport("csv")}>
             <DownloadIcon />
