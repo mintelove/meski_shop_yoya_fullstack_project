@@ -784,9 +784,8 @@ body {
   transition: border-color 0.5s ease;
 }
 
-/* Enhanced Sales Summary Stats (Dashboard & Sales Page) */
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card,
-.sales-summary-grid .dashboard-stat-card {
+/* Master Design Template: Dashboard Stat Cards */
+.dashboard-stat-card {
   border: none !important;
   padding: 1.6rem !important;
   border-radius: 22px !important;
@@ -795,30 +794,27 @@ body {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease !important;
   overflow: visible !important;
   position: relative !important;
-  min-height: 120px !important;
+  min-height: 125px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
   z-index: 1 !important;
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card:nth-child(1),
-.sales-summary-grid .dashboard-stat-card:nth-child(1) {
+/* Color Rotation (Indigo, Emerald, Amber) */
+.dashboard-stat-card:nth-child(3n+1) {
   background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important; /* Indigo to Purple */
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card:nth-child(2),
-.sales-summary-grid .dashboard-stat-card:nth-child(2) {
+.dashboard-stat-card:nth-child(3n+2) {
   background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important; /* Emerald to Green */
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card:nth-child(3),
-.sales-summary-grid .dashboard-stat-card:nth-child(3) {
+.dashboard-stat-card:nth-child(3n) {
   background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important; /* Amber to Orange */
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card .dashboard-stat-title,
-.sales-summary-grid .dashboard-stat-card .dashboard-stat-title {
+.dashboard-stat-card .dashboard-stat-title {
   color: rgba(255, 255, 255, 0.85) !important;
   font-size: 0.95rem !important;
   font-weight: 600 !important;
@@ -827,8 +823,7 @@ body {
   margin-bottom: 0.6rem !important;
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card .dashboard-stat-value,
-.sales-summary-grid .dashboard-stat-card .dashboard-stat-value {
+.dashboard-stat-value {
   font-size: 2.2rem !important;
   font-weight: 800 !important;
   color: #ffffff !important;
@@ -836,15 +831,19 @@ body {
   line-height: 1.1 !important;
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card:hover,
-.sales-summary-grid .dashboard-stat-card:hover {
+.dashboard-stat-subtitle {
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 0.85rem !important;
+  margin-top: 0.4rem !important;
+}
+
+.dashboard-stat-card:hover {
   transform: translateY(-10px) scale(1.03) !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
   z-index: 10 !important;
 }
 
-.dashboard-tracking-card .dashboard-metrics-grid .dashboard-stat-card::after,
-.sales-summary-grid .dashboard-stat-card::after {
+.dashboard-stat-card::after {
   content: '';
   position: absolute;
   inset: 0;
