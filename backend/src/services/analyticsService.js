@@ -110,7 +110,8 @@ export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAd
         $group: {
           _id: null,
           count: { $sum: 1 },
-          amount: { $sum: convertedSaleAmountExpr("total_price") }
+          amount: { $sum: convertedSaleAmountExpr("total_price") },
+          itemsSold: { $sum: "$quantity" }
         }
       }
     ]),
@@ -121,7 +122,8 @@ export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAd
         $group: {
           _id: null,
           count: { $sum: 1 },
-          amount: { $sum: convertedSaleAmountExpr("total_price") }
+          amount: { $sum: convertedSaleAmountExpr("total_price") },
+          itemsSold: { $sum: "$quantity" }
         }
       }
     ]),
@@ -174,7 +176,8 @@ export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAd
       // Minimal Summary for filtered views
       dailySales: daily.amount,
       totalSales: totalRevenue,
-      totalTransactions: daily.count
+      totalTransactions: daily.count,
+      totalItemsSold: daily.itemsSold || 0
     };
   }
 
@@ -187,7 +190,8 @@ export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAd
     // Minimal Summary for filtered views
     dailySales: daily.amount,
     totalSales: totalRevenue,
-    totalTransactions: daily.count
+    totalTransactions: daily.count,
+    totalItemsSold: daily.itemsSold || 0
   };
 };
 

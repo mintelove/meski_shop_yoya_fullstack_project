@@ -236,6 +236,11 @@ export const DashboardPage = () => {
         title: t("dashboard.weeklySales"),
         value: formatCurrency(data?.weekly?.amount || 0),
         subtitle: `${data?.weekly?.count || 0} ${t("dashboard.transactions")}`
+      },
+      {
+        title: t("dashboard.totalItemsSold") || "Items Sold",
+        value: data?.totalItemsSold ?? data?.daily?.itemsSold ?? 0,
+        subtitle: t("dashboard.allCompletedSales") || "Total units sold"
       }
     ];
 
