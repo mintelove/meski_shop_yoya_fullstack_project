@@ -33,19 +33,30 @@ export const SalesPage = () => {
   const [form, setForm] = useState({ productId: "", quantity: 1 });
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [exportFrom, setExportFrom] = useState("");
-  const [exportTo, setExportTo] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [summary, setSummary] = useState({ totalItemsSold: 0, totalSalesAmount: 0, totalTransactions: 0 });
   const [saleSuccess, setSaleSuccess] = useState(false);
   const successTimer = useRef(null);
 
   const fetchData = useCallback(async () => {
-    const [productsRes, salesRes] = await Promise.all([api.get("/products"), api.get("/sales")]);
+    const params = {};
+    if (dateFilter) params.date = dateFilter;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+
+    const [productsRes, salesRes] = await Promise.all([
+      api.get("/products"),
+      api.get("/sales", { params })
+    ]);
     setProducts(productsRes.data);
-    setSales(salesRes.data);
+    setSales(salesRes.data.sales || []);
+    setSummary(salesRes.data.summary || { totalItemsSold: 0, totalSalesAmount: 0, totalTransactions: 0 });
     if (!form.productId && productsRes.data[0]) {
       setForm((prev) => ({ ...prev, productId: productsRes.data[0]._id }));
     }
-  }, [form.productId]);
+  }, [form.productId, dateFilter, startDate, endDate]);
 
   useEffect(() => {
     fetchData();
@@ -93,17 +104,17 @@ export const SalesPage = () => {
     });
   }, [sales, search, language]);
 
-  // CSV export handler
-  const onExportCsv = () => {
+  // Export handler (CSV or PDF)
+  const onExport = (format) => {
     const params = new URLSearchParams();
-    if (exportFrom) params.set("from", exportFrom);
-    if (exportTo) params.set("to", exportTo);
+    if (dateFilter) params.set("date", dateFilter);
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
 
     const token = localStorage.getItem("token");
     const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-    const url = `${baseUrl}/sales/export-csv?${params.toString()}`;
+    const url = `${baseUrl}/sales/export/${format}?${params.toString()}`;
 
-    // Use fetch with auth header then trigger download
     fetch(url, {
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -111,7 +122,7 @@ export const SalesPage = () => {
       .then((blob) => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "sales_export.csv";
+        a.download = `sales_report_${new Date().toISOString().slice(0, 10)}.${format}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -157,20 +168,45 @@ export const SalesPage = () => {
 
       {error ? <p className="error">{error}</p> : null}
 
-      {/* CSV Export Toolbar */}
-      <div className="card csv-export-bar">
+      {/* Export Toolbar */}
+      <div className="card csv-export-bar" style={{ flexWrap: "wrap", gap: "1rem" }}>
+        <div className="csv-export-group">
+          <label>{t("dashboard.singleDate") || "Single Date"}</label>
+          <input type="date" value={dateFilter} onChange={(e) => { setDateFilter(e.target.value); setStartDate(""); setEndDate(""); }} />
+        </div>
         <div className="csv-export-group">
           <label>{t("sales.startDate")}</label>
-          <input type="date" value={exportFrom} onChange={(e) => setExportFrom(e.target.value)} />
+          <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setDateFilter(""); }} />
         </div>
         <div className="csv-export-group">
           <label>{t("sales.endDate")}</label>
-          <input type="date" value={exportTo} onChange={(e) => setExportTo(e.target.value)} />
+          <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setDateFilter(""); }} />
         </div>
-        <button type="button" className="csv-export-btn" onClick={onExportCsv}>
-          <DownloadIcon />
-          {t("sales.exportCsv")}
-        </button>
+        <div className="row" style={{ gap: "0.5rem", marginLeft: "auto" }}>
+          <button type="button" className="csv-export-btn" onClick={() => onExport("csv")}>
+            <DownloadIcon />
+            {t("sales.exportCsv")}
+          </button>
+          <button type="button" className="csv-export-btn" style={{ background: "var(--danger)" }} onClick={() => onExport("pdf")}>
+            <DownloadIcon />
+            {t("dashboard.exportPdf") || "Export PDF"}
+          </button>
+        </div>
+      </div>
+      {/* Summary Metrics */}
+      <div className="grid dashboard-metrics-grid sales-summary-grid" style={{ marginBottom: "1rem" }}>
+        <div className="card stat-card dashboard-stat-card sales-summary-card">
+          <p className="dashboard-stat-title">{t("sales.totalItemsSold")}</p>
+          <p className="dashboard-stat-value">{summary.totalItemsSold}</p>
+        </div>
+        <div className="card stat-card dashboard-stat-card sales-summary-card">
+          <p className="dashboard-stat-title">{t("sales.totalSalesAmount")}</p>
+          <p className="dashboard-stat-value">{formatCurrency(summary.totalSalesAmount)}</p>
+        </div>
+        <div className="card stat-card dashboard-stat-card sales-summary-card">
+          <p className="dashboard-stat-title">{t("sales.totalTransactions")}</p>
+          <p className="dashboard-stat-value">{summary.totalTransactions}</p>
+        </div>
       </div>
 
       {/* Search Bar */}

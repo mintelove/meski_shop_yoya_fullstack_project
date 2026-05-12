@@ -50,8 +50,8 @@
     "loginSuccess": "መግባት ተሳክቷል።"
   },
   "dashboard": {
-    "adminTitle": "የአስተዳዳሪ ዳሽቦርድ",
-    "myTitle": "የእኔ ዳሽቦርድ",
+    "adminTitle": "የአስተዳዳሪ",
+    "myTitle": "የእኔ",
     "loadFailed": "ዳሽቦርድን መጫን አልተሳካም።",
     "dailySales": "የዕለት ሽያጭ",
     "weeklySales": "የሳምንት ሽያጭ",
@@ -82,6 +82,10 @@
     "toDate": "እስከ ቀን",
     "applyFilter": "ማጣሪያ ተግብር",
     "resetFilter": "ማጣሪያ ዳግም አቀናብር",
+    "exportPdf": "PDF አውጣ",
+    "exportCsv": "CSV አውጣ",
+    "switchToRange": "📅 አንድ ቀን | የቀን ክልል →",
+    "switchToSingle": "← አንድ ቀን | የቀን ክልል 📅",
     "singleDateMode": "የአንድ ቀን ማጣሪያ ንቁ ነው።",
     "rangeMode": "የቀን ክልል ማጣሪያ ንቁ ነው።",
     "allTimeMode": "ሁሉንም ያለውን መረጃ እያሳየ ነው።",
@@ -113,7 +117,11 @@
     "lowStock": "ዝቅተኛ እቃ",
     "healthy": "በእቃ ላይ",
     "initialStock": "ዋና ክምችት",
-    "sold": "የተሸጠ"
+    "sold": "የተሸጠ",
+    "categoryManagement": "የምድብ አስተዳደር",
+    "newCategory": "አዲስ የምድብ ስም",
+    "addedSuccess": "ምርት በትክክል ተጨምሯል",
+    "updatedSuccess": "ምርት በትክክል ተዘምኗል"
   },
   "sales": {
     "allSalesTitle": "ሁሉም ሽያጮች",
@@ -132,7 +140,10 @@
     "startDate": "የመጀመሪያ ቀን",
     "endDate": "የመጨረሻ ቀን",
     "noResults": "ምንም ተዛማጅ ሽያጭ አልተገኘም።",
-    "exportFailed": "CSV ማውጣት አልተሳካም።"
+    "exportFailed": "CSV መላክ አልተሳካም።",
+    "totalItemsSold": "ጠቅላላ የተሸጡ ዕቃዎች",
+    "totalSalesAmount": "ጠቅላላ የሽያጭ መጠን (ETB)",
+    "totalTransactions": "ጠቅላላ የግብይቶች ብዛት"
   },
   "users": {
     "title": "ተጠቃሚ ፍጠር",

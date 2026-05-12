@@ -49,9 +49,12 @@ export const ProductsPage = () => {
   const { user } = useAuth();
   const { t } = useI18n();
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
   const [form, setForm] = useState(defaultForm);
   const [editingId, setEditingId] = useState(null);
+  const [newCatName, setNewCatName] = useState("");
+  const [message, setMessage] = useState("");
   const isAdmin = user?.role === "admin";
 
   const fetchProducts = useCallback(async () => {
@@ -61,9 +64,19 @@ export const ProductsPage = () => {
     setProducts(res.data);
   }, [search]);
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await api.get("/categories");
+      setCategories(res.data);
+    } catch {
+      // silent
+    }
+  }, []);
+
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
 
   useSocket("stock:update", fetchProducts);
 
@@ -78,12 +91,15 @@ export const ProductsPage = () => {
 
     if (editingId) {
       await api.put(`/products/${editingId}`, payload);
+      setMessage(t("products.updatedSuccess") || "Product Updated Successfully");
     } else {
       await api.post("/products", payload);
+      setMessage(t("products.addedSuccess") || "Product Added Successfully");
     }
     setForm(defaultForm);
     setEditingId(null);
     fetchProducts();
+    setTimeout(() => setMessage(""), 3000);
   };
 
   const onEdit = (product) => {
@@ -100,6 +116,28 @@ export const ProductsPage = () => {
   const onDelete = async (id) => {
     await api.delete(`/products/${id}`);
     fetchProducts();
+  };
+
+  const onAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatName.trim()) return;
+    try {
+      await api.post("/categories", { name: newCatName.trim() });
+      setNewCatName("");
+      fetchCategories();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to add category");
+    }
+  };
+
+  const onDeleteCategory = async (id) => {
+    if (!window.confirm("Delete this category?")) return;
+    try {
+      await api.delete(`/categories/${id}`);
+      fetchCategories();
+    } catch (err) {
+      alert("Failed to delete category");
+    }
   };
 
   const csvExport = useMemo(() => {
@@ -135,12 +173,16 @@ export const ProductsPage = () => {
             value={form.quantity}
             onChange={(e) => setForm({ ...form, quantity: e.target.value })}
           />
-          <input
-            placeholder={t("products.category")}
+          <select
             required
             value={form.category}
             onChange={(e) => setForm({ ...form, category: e.target.value })}
-          />
+          >
+            <option value="">-- {t("products.category")} --</option>
+            {categories.map((c) => (
+              <option key={c._id} value={c.name}>{c.name}</option>
+            ))}
+          </select>
           <input
             type="number"
             placeholder={t("products.lowStockThreshold")}
@@ -150,7 +192,42 @@ export const ProductsPage = () => {
           <button className="btn" type="submit">
             {editingId ? t("common.updateProduct") : t("common.addProduct")}
           </button>
+          {message && <p className="stock-status stock-status--healthy" style={{ marginTop: '0.8rem', fontWeight: '500' }}>{message}</p>}
         </form>
+      )}
+
+      {isAdmin && (
+        <div className="card stack">
+          <div className="row-between">
+            <h4>{t("products.categoryManagement") || "Category Management"}</h4>
+            <form onSubmit={onAddCategory} className="form-inline" style={{ marginBottom: 0 }}>
+              <input
+                placeholder={t("products.newCategory") || "New Category Name"}
+                value={newCatName}
+                onChange={(e) => setNewCatName(e.target.value)}
+                required
+              />
+              <button className="btn" type="submit">
+                {t("common.create")}
+              </button>
+            </form>
+          </div>
+          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.5rem' }}>
+            {categories.map((cat) => (
+              <div key={cat._id} className="row-between" style={{ padding: '0.4rem 0.6rem', background: 'rgba(0,0,0,0.03)', borderRadius: '8px', fontSize: '0.85rem' }}>
+                <span>{cat.name}</span>
+                <button
+                  type="button"
+                  onClick={() => onDeleteCategory(cat._id)}
+                  style={{ border: 'none', background: 'transparent', color: 'var(--danger)', cursor: 'pointer', padding: 0, fontWeight: 'bold' }}
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+            {categories.length === 0 && <p className="muted" style={{ fontSize: '0.8rem' }}>No categories created yet.</p>}
+          </div>
+        </div>
       )}
 
       <div className="card">

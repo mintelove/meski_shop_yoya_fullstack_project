@@ -55,7 +55,11 @@ router.post(
         initialStock: qty
       });
       emitStockUpdate({ type: "product-created", product });
-      return res.status(201).json(product);
+      return res.status(201).json({
+        success: true,
+        message: "Product Added Successfully",
+        product
+      });
     } catch (error) {
       return next(error);
     }
@@ -94,7 +98,11 @@ router.put(
 
       const product = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
       emitStockUpdate({ type: "product-updated", product });
-      return res.json(product);
+      return res.json({
+        success: true,
+        message: "Product Updated Successfully",
+        product
+      });
     } catch (error) {
       return next(error);
     }

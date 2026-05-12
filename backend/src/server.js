@@ -9,6 +9,9 @@ import productRoutes from "./routes/products.js";
 import salesRoutes from "./routes/sales.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import adminRoutes from "./routes/admin.js";
+import analyticsRoutes from "./routes/analytics.js";
+import reportRoutes from "./routes/reports.js";
+import categoryRoutes from "./routes/categories.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { setSocketInstance } from "./utils/socket.js";
 import { seedAdmin } from "./seedAdmin.js";
@@ -41,6 +44,9 @@ app.use("/api/products", productRoutes);
 app.use("/api/sales", salesRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.use(errorHandler);
 

@@ -50,8 +50,8 @@
     "loginSuccess": "Login successful."
   },
   "dashboard": {
-    "adminTitle": "Admin Dashboard",
-    "myTitle": "My Dashboard",
+    "adminTitle": "Admin",
+    "myTitle": "My",
     "loadFailed": "Failed to load dashboard.",
     "dailySales": "Daily Sales",
     "weeklySales": "Weekly Sales",
@@ -82,6 +82,10 @@
     "toDate": "To Date",
     "applyFilter": "Apply Filter",
     "resetFilter": "Reset Filter",
+    "exportPdf": "Export PDF",
+    "exportCsv": "Export CSV",
+    "switchToRange": "📅 Single Date | Range Date →",
+    "switchToSingle": "← Single Date | Range Date 📅",
     "singleDateMode": "Single date filter is active.",
     "rangeMode": "Date range filter is active.",
     "allTimeMode": "Showing all available data.",
@@ -113,7 +117,11 @@
     "lowStock": "Low Stock",
     "healthy": "In Stock",
     "initialStock": "Initial Stock",
-    "sold": "Sold"
+    "sold": "Sold",
+    "categoryManagement": "Category Management",
+    "newCategory": "New Category Name",
+    "addedSuccess": "Product Added Successfully",
+    "updatedSuccess": "Product Updated Successfully"
   },
   "sales": {
     "allSalesTitle": "All Sales",
@@ -132,7 +140,10 @@
     "startDate": "Start Date",
     "endDate": "End Date",
     "noResults": "No matching sales found.",
-    "exportFailed": "Failed to export CSV."
+    "exportFailed": "Failed to export CSV.",
+    "totalItemsSold": "Total Items Sold",
+    "totalSalesAmount": "Total Sales Amount (ETB)",
+    "totalTransactions": "Total Transactions"
   },
   "users": {
     "title": "Create User",
