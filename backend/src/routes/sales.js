@@ -438,7 +438,7 @@ router.get("/purchases/export/pdf", protect, authorize("salesman", "admin"), asy
       else doc.rect(LEFT, y, PAGE_W, rh).fill("#ffffff");
 
       doc.fillColor("#334155").fontSize(9).font("Helvetica");
-      drawRow(pCols, vals, y);
+      drawRow(pCols, vals, y, rh);
       y += rh;
     });
 
@@ -475,7 +475,7 @@ router.get("/purchases/export/pdf", protect, authorize("salesman", "admin"), asy
     function drawTxHeader(atY) {
       doc.rect(LEFT, atY, PAGE_W, 22).fill("#1e293b");
       doc.fillColor("#ffffff").fontSize(8).font("Helvetica-Bold");
-      drawRow(tCols, tHeaders, atY);
+      drawRow(tCols, tHeaders, atY, 22);
       return atY + 22;
     }
 
@@ -508,7 +508,7 @@ router.get("/purchases/export/pdf", protect, authorize("salesman", "admin"), asy
       else doc.rect(LEFT, y, PAGE_W, rh).fill("#ffffff");
 
       doc.fillColor("#334155").fontSize(8).font("Helvetica");
-      drawRow(tCols, vals, y);
+      drawRow(tCols, vals, y, rh);
       y += rh;
     });
 
@@ -673,6 +673,10 @@ router.put("/:id", protect, authorize("salesman", "admin"), async (req, res, nex
       const newPrice = Number(sellingPrice);
       if (isNaN(newPrice) || newPrice <= 0) {
         return res.status(400).json({ success: false, message: "Selling price must be a positive number." });
+      }
+      // Price must be >= current selling price
+      if (newPrice < sale.unit_price) {
+        return res.status(400).json({ success: false, message: "Invalid price" });
       }
       sale.unit_price = newPrice;
     }

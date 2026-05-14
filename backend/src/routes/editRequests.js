@@ -130,7 +130,7 @@ router.patch("/:id", protect, authorize("admin"), async (req, res, next) => {
             await product.save();
           }
           sale.status = "returned";
-          sale.editedOnce = true;
+          sale.editedOnce = false;
           sale.adminMessage = "";
           await sale.save();
 
@@ -141,7 +141,7 @@ router.patch("/:id", protect, authorize("admin"), async (req, res, next) => {
         if (sale.status === "active" && editReq.newPrice) {
           sale.unit_price = editReq.newPrice;
           sale.total_price = Number((sale.unit_price * sale.quantity).toFixed(2));
-          sale.editedOnce = true;
+          sale.editedOnce = false;
           sale.adminMessage = "";
           await sale.save();
 
@@ -152,7 +152,7 @@ router.patch("/:id", protect, authorize("admin"), async (req, res, next) => {
       // REJECTED: set adminMessage on the transaction
       const sale = await Sale.findById(editReq.transaction_id);
       if (sale) {
-        sale.adminMessage = "Rejected by The Admin";
+        sale.adminMessage = "Rejected by admin";
         await sale.save();
         emitStockUpdate({ type: "request-rejected", saleId: sale._id });
       }
