@@ -9,14 +9,14 @@ const migrateProducts = async () => {
   let updated = 0;
   for (const product of products) {
     const sourceCurrency = getRecordCurrency(product.currency);
-    const convertedPrice = toAppCurrency(product.price, sourceCurrency);
-    const shouldUpdate = sourceCurrency !== APP_CURRENCY || convertedPrice !== product.price;
-    if (shouldUpdate) {
-      product.price = convertedPrice;
-      product.currency = APP_CURRENCY;
-      await product.save();
-      updated += 1;
-    }
+    if (sourceCurrency === APP_CURRENCY) continue;
+    const convertedPurchased = toAppCurrency(product.purchasedPrice || 0, sourceCurrency);
+    const convertedMinSelling = toAppCurrency(product.minSellingPrice || 0, sourceCurrency);
+    product.purchasedPrice = convertedPurchased;
+    product.minSellingPrice = convertedMinSelling;
+    product.currency = APP_CURRENCY;
+    await product.save();
+    updated += 1;
   }
   return updated;
 };

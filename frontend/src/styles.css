@@ -1681,3 +1681,177 @@ tbody tr:hover {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* =========================================================
+   PROFIT SECTION
+   ========================================================= */
+
+/* Total Profit Dashboard Card */
+.profit-total-card {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  border: none;
+  border-radius: 22px;
+  padding: 1.6rem;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.profit-total-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(to bottom right, rgba(255,255,255,0.18), transparent);
+  pointer-events: none;
+}
+
+.profit-total-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 45px rgba(17, 153, 142, 0.35);
+}
+
+.profit-total-label {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 0.5rem;
+}
+
+.profit-total-value {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  line-height: 1.1;
+}
+
+.profit-total-subtitle {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Negative profit → red gradient */
+.profit-total-card--negative {
+  background: linear-gradient(135deg, #dc2626 0%, #f87171 100%);
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.25);
+}
+.profit-total-card--negative:hover {
+  box-shadow: 0 20px 45px rgba(220, 38, 38, 0.3);
+}
+
+/* Zero profit → neutral slate gradient */
+.profit-total-card--zero {
+  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
+  box-shadow: 0 10px 30px rgba(71, 85, 105, 0.25);
+}
+.profit-total-card--zero:hover {
+  box-shadow: 0 20px 45px rgba(71, 85, 105, 0.3);
+}
+
+/* Profit page table enhancements */
+.profit-table-card {
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.profit-table-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.profit-table-card table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.profit-table-card table tbody tr:hover {
+  background: var(--table-hover);
+  transform: scale(1.005);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Profit export buttons row */
+.profit-export-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+  align-items: center;
+}
+
+.profit-export-row .csv-export-btn {
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profit-export-row .csv-export-btn:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .profit-total-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .profit-total-card:hover {
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .profit-table-card {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .profit-table-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================================================
+   MODAL OVERLAY
+   ========================================================= */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modal-fadeIn 0.2s ease;
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: modal-slideUp 0.25s ease;
+}
+
+@keyframes modal-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+  color: #fff !important;
+}

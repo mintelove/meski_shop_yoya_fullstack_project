@@ -7,6 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ProductsPage } from "./pages/ProductsPage";
 import { SalesPage } from "./pages/SalesPage";
+import { PurchasePage } from "./pages/PurchasePage";
 import { UsersPage } from "./pages/UsersPage";
 import { AdminSettingsPage } from "./pages/AdminSettingsPage";
 import { AboutUs } from "./pages/AboutUs";
@@ -45,6 +46,7 @@ function App() {
           <Route index element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="sales" element={<SalesPage />} />
+          <Route path="purchases" element={<PurchasePage />} />
           <Route
             path="users"
             element={

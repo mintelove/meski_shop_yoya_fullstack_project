@@ -35,6 +35,9 @@ export const Layout = () => {
           <Link to="/sales" className={linkClass(location.pathname === "/sales")}>
             {t("nav.sales")}
           </Link>
+          <Link to="/purchases" className={linkClass(location.pathname === "/purchases")}>
+            {t("nav.purchases") || "Profit"}
+          </Link>
           {isAdmin && (
             <Link to="/users" className={linkClass(location.pathname === "/users")}>
               {t("nav.users")}

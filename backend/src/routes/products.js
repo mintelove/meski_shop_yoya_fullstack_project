@@ -25,7 +25,8 @@ router.get("/", protect, async (req, res, next) => {
       const sourceCurrency = getRecordCurrency(product.currency);
       if (sourceCurrency === APP_CURRENCY) return product;
       const data = product.toObject();
-      data.price = toAppCurrency(data.price, sourceCurrency);
+      data.purchasedPrice = toAppCurrency(data.purchasedPrice || 0, sourceCurrency);
+      data.minSellingPrice = toAppCurrency(data.minSellingPrice || 0, sourceCurrency);
       data.currency = APP_CURRENCY;
       return data;
     });
@@ -41,7 +42,8 @@ router.post(
   authorize("admin"),
   [
     body("name").notEmpty(),
-    body("price").isFloat({ min: 0 }),
+    body("purchasedPrice").optional().isFloat({ min: 0 }).withMessage("Purchased price must be a valid number ≥ 0"),
+    body("minSellingPrice").optional().isFloat({ min: 0 }).withMessage("Minimum selling price must be a valid number ≥ 0"),
     body("quantity").isInt({ min: 0 }),
     body("category").notEmpty()
   ],
@@ -49,8 +51,24 @@ router.post(
   async (req, res, next) => {
     try {
       const qty = Number(req.body.quantity) || 0;
+      const purchasedPrice = Number(req.body.purchasedPrice) || 0;
+      const minSellingPrice = Number(req.body.minSellingPrice) || 0;
+
+      // Cross-field validation
+      if (minSellingPrice < purchasedPrice) {
+        return res.status(400).json({
+          success: false,
+          message: "Minimum selling price must be greater than or equal to purchased price"
+        });
+      }
+
       const product = await Product.create({
-        ...req.body,
+        name: req.body.name,
+        purchasedPrice,
+        minSellingPrice,
+        quantity: qty,
+        category: req.body.category,
+        lowStockThreshold: req.body.lowStockThreshold,
         currency: APP_CURRENCY,
         initialStock: qty
       });
@@ -72,7 +90,8 @@ router.put(
   authorize("admin"),
   [
     body("name").optional().notEmpty(),
-    body("price").optional().isFloat({ min: 0 }),
+    body("purchasedPrice").optional().isFloat({ min: 0 }).withMessage("Purchased price must be a valid number ≥ 0"),
+    body("minSellingPrice").optional().isFloat({ min: 0 }).withMessage("Minimum selling price must be a valid number ≥ 0"),
     body("quantity").optional().isInt({ min: 0 }),
     body("category").optional().notEmpty()
   ],
@@ -84,7 +103,29 @@ router.put(
         return res.status(404).json({ message: "Product not found." });
       }
 
-      const updateData = { ...req.body, currency: APP_CURRENCY };
+      // Resolve final values (use submitted value or fall back to existing)
+      const purchasedPrice = req.body.purchasedPrice !== undefined ? Number(req.body.purchasedPrice) : (existing.purchasedPrice || 0);
+      const minSellingPrice = req.body.minSellingPrice !== undefined ? Number(req.body.minSellingPrice) : (existing.minSellingPrice || 0);
+
+      // Cross-field validation
+      if (minSellingPrice < purchasedPrice) {
+        return res.status(400).json({
+          success: false,
+          message: "Minimum selling price must be greater than or equal to purchased price"
+        });
+      }
+
+      const updateData = {
+        name: req.body.name,
+        purchasedPrice,
+        minSellingPrice,
+        quantity: req.body.quantity,
+        category: req.body.category,
+        lowStockThreshold: req.body.lowStockThreshold,
+        currency: APP_CURRENCY
+      };
+      // Remove undefined keys so we don't overwrite with undefined
+      Object.keys(updateData).forEach((k) => updateData[k] === undefined && delete updateData[k]);
 
       // If quantity increased (restocking), increase initialStock by the same delta
       if (req.body.quantity !== undefined) {

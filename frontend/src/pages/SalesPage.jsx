@@ -30,7 +30,7 @@ export const SalesPage = () => {
   const { t, language } = useI18n();
   const [products, setProducts] = useState([]);
   const [sales, setSales] = useState([]);
-  const [form, setForm] = useState({ productId: "", quantity: 1 });
+  const [form, setForm] = useState({ productId: "", quantity: 1, sellingPrice: "" });
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("");
@@ -39,6 +39,12 @@ export const SalesPage = () => {
   const [summary, setSummary] = useState({ totalItemsSold: 0, totalSalesAmount: 0, totalTransactions: 0 });
   const [saleSuccess, setSaleSuccess] = useState(false);
   const successTimer = useRef(null);
+
+  // Derive the selected product to show original price reference
+  const selectedProduct = useMemo(() => {
+    if (!form.productId) return null;
+    return products.find((p) => p._id === form.productId) || null;
+  }, [products, form.productId]);
 
   const fetchData = useCallback(async () => {
     const params = {};
@@ -54,7 +60,7 @@ export const SalesPage = () => {
     setSales(salesRes.data.sales || []);
     setSummary(salesRes.data.summary || { totalItemsSold: 0, totalSalesAmount: 0, totalTransactions: 0 });
     if (!form.productId && productsRes.data[0]) {
-      setForm((prev) => ({ ...prev, productId: productsRes.data[0]._id }));
+      setForm((prev) => ({ ...prev, productId: productsRes.data[0]._id, sellingPrice: "" }));
     }
   }, [form.productId, dateFilter, startDate, endDate]);
 
@@ -73,12 +79,33 @@ export const SalesPage = () => {
   const onSale = async (e) => {
     e.preventDefault();
     setError("");
+
+    // Frontend validation: selling price is REQUIRED
+    const trimmedPrice = String(form.sellingPrice).trim();
+    if (trimmedPrice === "") {
+      setError("Selling price is required");
+      return;
+    }
+    const numPrice = Number(trimmedPrice);
+    if (isNaN(numPrice) || numPrice <= 0) {
+      setError("Selling price must be a valid positive number");
+      return;
+    }
+    if (selectedProduct) {
+      const minPrice = selectedProduct.minSellingPrice || 0;
+      if (minPrice > 0 && numPrice < minPrice) {
+        setError("Price must be equal or greater than minimum selling price");
+        return;
+      }
+    }
+
     try {
       await api.post("/sales", {
         productId: form.productId,
-        quantity: Number(form.quantity)
+        quantity: Number(form.quantity),
+        sellingPrice: numPrice
       });
-      setForm((prev) => ({ ...prev, quantity: 1 }));
+      setForm((prev) => ({ ...prev, quantity: 1, sellingPrice: "" }));
       fetchData();
 
       // Trigger success state for 3 seconds
@@ -147,7 +174,7 @@ export const SalesPage = () => {
             <p className="sale-success-text">Transaction Successful</p>
           </div>
         )}
-        <select value={form.productId} onChange={(e) => setForm({ ...form, productId: e.target.value })}>
+        <select value={form.productId} onChange={(e) => setForm({ ...form, productId: e.target.value, sellingPrice: "" })}>
           {products.map((p) => (
             <option key={p._id} value={p._id}>
               {p.name} ({t("sales.stock")}: {p.quantity})
@@ -161,6 +188,22 @@ export const SalesPage = () => {
           value={form.quantity}
           onChange={(e) => setForm({ ...form, quantity: e.target.value })}
         />
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", minWidth: "140px" }}>
+          <input
+            type="number"
+            step="0.01"
+            min={selectedProduct ? (selectedProduct.minSellingPrice || 0.01) : 0.01}
+            placeholder="Selling Price (Br)"
+            required
+            value={form.sellingPrice}
+            onChange={(e) => setForm({ ...form, sellingPrice: e.target.value })}
+          />
+          {selectedProduct && selectedProduct.minSellingPrice > 0 && (
+            <span style={{ fontSize: "0.75rem", color: "var(--text-muted, #94a3b8)", whiteSpace: "nowrap" }}>
+              Min Price: {formatCurrency(selectedProduct.minSellingPrice)}
+            </span>
+          )}
+        </div>
         <button className="btn" type="submit" disabled={saleSuccess}>
           {t("sales.completeSale")}
         </button>

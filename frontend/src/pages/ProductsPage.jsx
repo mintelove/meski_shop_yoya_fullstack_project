@@ -7,7 +7,8 @@ import { useI18n } from "../context/I18nContext";
 
 const defaultForm = {
   name: "",
-  price: "",
+  purchasedPrice: "",
+  minSellingPrice: "",
   quantity: "",
   category: "",
   lowStockThreshold: 10
@@ -82,31 +83,48 @@ export const ProductsPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    const purchasedPrice = Number(form.purchasedPrice) || 0;
+    const minSellingPrice = Number(form.minSellingPrice) || 0;
+
+    // Frontend cross-field validation
+    if (minSellingPrice < purchasedPrice) {
+      setMessage("");
+      alert("Minimum selling price must be greater than or equal to purchased price");
+      return;
+    }
+
     const payload = {
       ...form,
-      price: Number(form.price),
+      purchasedPrice,
+      minSellingPrice,
       quantity: Number(form.quantity),
       lowStockThreshold: Number(form.lowStockThreshold)
     };
 
-    if (editingId) {
-      await api.put(`/products/${editingId}`, payload);
-      setMessage(t("products.updatedSuccess") || "Product Updated Successfully");
-    } else {
-      await api.post("/products", payload);
-      setMessage(t("products.addedSuccess") || "Product Added Successfully");
+    try {
+      if (editingId) {
+        await api.put(`/products/${editingId}`, payload);
+        setMessage(t("products.updatedSuccess") || "Product Updated Successfully");
+      } else {
+        await api.post("/products", payload);
+        setMessage(t("products.addedSuccess") || "Product Added Successfully");
+      }
+      setForm(defaultForm);
+      setEditingId(null);
+      fetchProducts();
+      setTimeout(() => setMessage(""), 3000);
+    } catch (err) {
+      alert(err.response?.data?.message || "Operation failed");
     }
-    setForm(defaultForm);
-    setEditingId(null);
-    fetchProducts();
-    setTimeout(() => setMessage(""), 3000);
   };
 
   const onEdit = (product) => {
     setEditingId(product._id);
     setForm({
       name: product.name,
-      price: product.price,
+      purchasedPrice: product.purchasedPrice || 0,
+      minSellingPrice: product.minSellingPrice || 0,
       quantity: product.quantity,
       category: product.category,
       lowStockThreshold: product.lowStockThreshold ?? 10
@@ -142,8 +160,10 @@ export const ProductsPage = () => {
 
   const csvExport = useMemo(() => {
     const rows = [
-      [t("products.name"), t("products.category"), t("products.priceEtdHeader"), t("products.quantity")],
-      ...products.map((p) => [p.name, p.category, p.price, p.quantity])
+      [t("products.name"), t("products.category"), "Purchased Price", "Min Selling Price", t("products.quantity")],
+      ...products.map((p) => {
+        return [p.name, p.category, p.purchasedPrice || 0, p.minSellingPrice || 0, p.quantity];
+      })
     ];
     return rows.map((row) => row.join(",")).join("\n");
   }, [products, t]);
@@ -161,11 +181,18 @@ export const ProductsPage = () => {
           <input
             type="number"
             step="0.01"
-            placeholder={t("products.priceBr")}
-            required
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
+            placeholder="Purchased Price (Br)"
+            value={form.purchasedPrice}
+            onChange={(e) => setForm({ ...form, purchasedPrice: e.target.value })}
           />
+          <input
+            type="number"
+            step="0.01"
+            placeholder="Min Selling Price (Br)"
+            value={form.minSellingPrice}
+            onChange={(e) => setForm({ ...form, minSellingPrice: e.target.value })}
+          />
+
           <input
             type="number"
             placeholder={t("products.quantity")}
@@ -239,7 +266,8 @@ export const ProductsPage = () => {
             <tr>
               <th>{t("products.name")}</th>
               <th>{t("products.category")}</th>
-              <th>{t("products.priceHeader")}</th>
+              {isAdmin && <th>Purchased Price</th>}
+              {isAdmin && <th>Min Selling Price</th>}
               <th>{t("products.stockLevel")}</th>
               <th>{t("products.status")}</th>
               {isAdmin ? <th>{t("products.actions")}</th> : null}
@@ -250,7 +278,8 @@ export const ProductsPage = () => {
               <tr key={product._id}>
                 <td>{product.name}</td>
                 <td>{product.category}</td>
-                <td>{formatCurrency(product.price)}</td>
+                {isAdmin && <td>{formatCurrency(product.purchasedPrice || 0)}</td>}
+                {isAdmin && <td>{formatCurrency(product.minSellingPrice || 0)}</td>}
                 <td>
                   <StockBar
                     current={product.quantity}
