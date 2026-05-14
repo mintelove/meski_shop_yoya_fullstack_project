@@ -23,6 +23,16 @@ const statusBadge = (status) => {
   );
 };
 
+const adminPriceBadge = (price) => (
+  <div style={{
+    padding: "0.4rem 0.7rem", borderRadius: "8px", fontSize: "0.82rem", fontWeight: 600,
+    background: "rgba(59,130,246,0.08)", color: "#2563eb", border: "1px solid rgba(59,130,246,0.15)",
+    marginBottom: "0.5rem"
+  }}>
+    💰 Admin Price: <strong>Br {Number(price).toFixed(2)}</strong>
+  </div>
+);
+
 export const PurchasePage = () => {
   const { t, language } = useI18n();
   const { user } = useAuth();
@@ -49,6 +59,9 @@ export const PurchasePage = () => {
   // Admin: edit requests
   const [editRequests, setEditRequests] = useState([]);
 
+  // Salesman: own edit requests (for button state)
+  const [myRequests, setMyRequests] = useState([]);
+
   const fetchData = useCallback(async () => {
     const params = {};
     if (dateFilter) params.date = dateFilter;
@@ -68,14 +81,32 @@ export const PurchasePage = () => {
     } catch { /* silent */ }
   }, [isAdmin]);
 
+  const fetchMyRequests = useCallback(async () => {
+    if (isAdmin) return;
+    try {
+      const res = await api.get("/edit-requests/mine");
+      setMyRequests(res.data);
+    } catch { /* silent */ }
+  }, [isAdmin]);
+
   useEffect(() => {
     fetchData();
     fetchEditRequests();
-    const interval = setInterval(fetchData, 3000);
+    fetchMyRequests();
+    const interval = setInterval(() => { fetchData(); fetchMyRequests(); }, 3000);
     return () => clearInterval(interval);
-  }, [fetchData, fetchEditRequests]);
+  }, [fetchData, fetchEditRequests, fetchMyRequests]);
 
-  useSocket("stock:update", () => { fetchData(); fetchEditRequests(); });
+  useSocket("stock:update", () => { fetchData(); fetchEditRequests(); fetchMyRequests(); });
+
+  // Get the latest request status for a transaction
+  const getRequestStatus = (txId) => {
+    const reqs = myRequests.filter(r => String(r.transaction_id?._id || r.transaction_id) === String(txId));
+    if (reqs.length === 0) return null;
+    // Sort by createdAt desc, return latest
+    const sorted = [...reqs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return sorted[0];
+  };
 
   const filteredTransactions = useMemo(() => {
     if (!search.trim()) return data.transactions;
@@ -155,6 +186,7 @@ export const PurchasePage = () => {
       if (reqType === "price_change") body.newPrice = Number(reqNewPrice);
       await api.post("/edit-requests", body);
       setReqSuccess("Request submitted!");
+      fetchMyRequests();
       setTimeout(() => { setReqTx(null); setReqReason(""); setReqNewPrice(""); setReqSuccess(""); }, 1500);
     } catch (err) {
       setReqError(err.response?.data?.message || "Request failed.");
@@ -175,6 +207,31 @@ export const PurchasePage = () => {
     : data.totalProfit < 0 ? "profit-total-card profit-total-card--negative" : "profit-total-card profit-total-card--zero";
 
   const pendingRequests = editRequests.filter(r => r.status === "pending");
+
+  // Render request button for a transaction
+  const renderRequestButton = (tx) => {
+    const latestReq = getRequestStatus(tx._id);
+
+    // Pending request exists → show disabled button
+    if (latestReq && latestReq.status === "pending") {
+      return (
+        <button className="btn" disabled style={{
+          padding: "0.2rem 0.5rem", fontSize: "0.7rem", background: "#94a3b8",
+          cursor: "not-allowed", opacity: 0.7, lineHeight: "1.2"
+        }}>
+          ⏳ Requested, please wait until approved by admin
+        </button>
+      );
+    }
+
+    // Default: show send request button
+    return (
+      <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", background: "#8b5cf6" }}
+        onClick={() => { setReqTx(tx); setReqType("cashback"); setReqReason(""); setReqNewPrice(""); setReqError(""); setReqSuccess(""); }}>
+        📝 Request
+      </button>
+    );
+  };
 
   return (
     <div className="stack">
@@ -340,12 +397,7 @@ export const PurchasePage = () => {
                         </button>
                       </>
                     )}
-                    {canRequest(tx) && (
-                      <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", background: "#8b5cf6" }}
-                        onClick={() => { setReqTx(tx); setReqType("cashback"); setReqReason(""); setReqNewPrice(""); setReqError(""); setReqSuccess(""); }}>
-                        📝 Request
-                      </button>
-                    )}
+                    {canRequest(tx) && renderRequestButton(tx)}
                   </td>
                 </tr>
               ))
@@ -360,6 +412,7 @@ export const PurchasePage = () => {
           <div className="card modal-card" onClick={(e) => e.stopPropagation()}>
             <h3>✏️ {t("sales.editTransaction")}</h3>
             <p style={{ margin: "0.4rem 0", color: "var(--muted)" }}>{editTx.product_name}</p>
+            {adminPriceBadge(editTx.minSellingPrice)}
             {editError && <p className="error" style={{ margin: "0.4rem 0" }}>{editError}</p>}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "0.6rem" }}>
               <div>
@@ -382,6 +435,7 @@ export const PurchasePage = () => {
           <div className="card modal-card" onClick={(e) => e.stopPropagation()}>
             <h3>📝 {t("sales.requestEditPermission")}</h3>
             <p style={{ margin: "0.4rem 0", color: "var(--muted)" }}>{reqTx.product_name} — {new Date(reqTx.date).toLocaleDateString()}</p>
+            {adminPriceBadge(reqTx.minSellingPrice)}
             {reqError && <p className="error" style={{ margin: "0.4rem 0" }}>{reqError}</p>}
             {reqSuccess && <p style={{ margin: "0.4rem 0", color: "#22c55e", fontWeight: 600 }}>{reqSuccess}</p>}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "0.6rem" }}>

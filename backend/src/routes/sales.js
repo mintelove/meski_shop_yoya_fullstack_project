@@ -235,7 +235,8 @@ async function buildProfitData(query, user) {
 
   const sales = await Sale.find(query)
     .sort({ createdAt: -1 })
-    .populate("salesman_id", "name email");
+    .populate("salesman_id", "name email")
+    .populate("product_id", "minSellingPrice");
 
   const transactions = sales.map((sale) => {
     const s = sale.toObject ? sale.toObject() : sale;
@@ -250,7 +251,7 @@ async function buildProfitData(query, user) {
     return {
       _id: s._id,
       product_name: s.product_name,
-      product_id: s.product_id,
+      product_id: s.product_id?._id || s.product_id,
       quantity: qty,
       sellingPrice,
       purchasedPrice,
@@ -261,7 +262,8 @@ async function buildProfitData(query, user) {
       date: s.createdAt,
       editedOnce: !!s.editedOnce,
       status: txStatus,
-      adminMessage: s.adminMessage || ""
+      adminMessage: s.adminMessage || "",
+      minSellingPrice: s.product_id?.minSellingPrice || 0
     };
   });
 
