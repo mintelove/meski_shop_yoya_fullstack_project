@@ -297,13 +297,25 @@ export const PurchasePage = () => {
         </div>
       </div>
 
-      {/* Total Profit Card */}
-      <div className={profitCardClass}>
-        <p className="profit-total-label">{t("sales.totalProfit")}</p>
-        <p className="profit-total-value">{formatCurrency(data.totalProfit)}</p>
-        <p className="profit-total-subtitle">
-          {data.transactions.filter(tx => tx.status === "active").length} {t("dashboard.transactions")}
-        </p>
+      {/* Summary Cards */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
+        {/* Total Profit Card */}
+        <div className={profitCardClass}>
+          <p className="profit-total-label">{t("sales.totalProfit")}</p>
+          <p className="profit-total-value">{formatCurrency(data.totalProfit)}</p>
+          <p className="profit-total-subtitle">
+            {data.transactions.filter(tx => tx.status === "active").length} {t("dashboard.transactions")}
+          </p>
+        </div>
+
+        {/* Total Items Sold Card */}
+        <div className="profit-total-card" style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)", color: "#fff", borderColor: "rgba(255,255,255,0.1)" }}>
+          <p className="profit-total-label" style={{ color: "rgba(255,255,255,0.9)" }}>Total Items Sold</p>
+          <p className="profit-total-value" style={{ color: "#fff" }}>{data.totalItemsSold || 0}</p>
+          <p className="profit-total-subtitle" style={{ color: "rgba(255,255,255,0.8)" }}>
+            Across all {data.transactions.filter(tx => tx.status === "active").length} active transactions
+          </p>
+        </div>
       </div>
 
       {/* Admin: Pending Edit Requests */}

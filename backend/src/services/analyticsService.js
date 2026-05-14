@@ -76,7 +76,7 @@ const getWeekOffset = (value) => {
  * @returns {Object} metrics
  */
 export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAdmin = false }) => {
-  const baseMatch = {};
+  const baseMatch = { status: "active" };
   if (userId) {
     baseMatch.salesman_id = new mongoose.Types.ObjectId(userId);
   }
@@ -202,7 +202,9 @@ export const getDashboardMetrics = async ({ dateFilter = {}, userId = null, isAd
  * @param {number} weekOffset - how many weeks back
  * @returns {Object} chart data
  */
-export const getDashboardTrendData = async (baseMatch = {}, weekOffset = 0, dateFilter = {}) => {
+export const getDashboardTrendData = async (baseMatch = { status: "active" }, weekOffset = 0, dateFilter = {}) => {
+  // Ensure status is filtered if not already present
+  if (!baseMatch.status) baseMatch.status = "active";
   let selectedWeekStart, selectedWeekEnd;
 
   // If a date filter is provided, try to extract a range from it for the charts
@@ -325,7 +327,7 @@ export const getDashboardTrendData = async (baseMatch = {}, weekOffset = 0, date
  * @returns {Object} { summary, byProduct }
  */
 export const getSalesTracking = async ({ dateFilter = {}, userId = null, role = "salesman" }) => {
-  const match = { ...dateFilter };
+  const match = { ...dateFilter, status: "active" };
   if (role !== "admin" && userId) {
     match.salesman_id = new mongoose.Types.ObjectId(userId);
   }
@@ -374,7 +376,7 @@ export const getSalesTracking = async ({ dateFilter = {}, userId = null, role = 
  * @returns {Array} [{ productName, totalSold }]
  */
 export const getTopSellingProducts = async ({ dateFilter = {}, limit = 10 }) => {
-  const match = { ...dateFilter };
+  const match = { ...dateFilter, status: "active" };
 
   const results = await Sale.aggregate([
     { $match: match },
@@ -407,7 +409,7 @@ export const getTopSellingProducts = async ({ dateFilter = {}, limit = 10 }) => 
  * @returns {Array} sales documents
  */
 export const getSalesForExport = async ({ dateFilter = {}, userId = null, role = "salesman" }) => {
-  const query = { ...dateFilter };
+  const query = { ...dateFilter, status: "active" };
   if (role !== "admin" && userId) {
     query.salesman_id = userId;
   }

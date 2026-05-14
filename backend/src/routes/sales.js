@@ -269,6 +269,7 @@ async function buildProfitData(query, user) {
 
   const productMap = {};
   for (const tx of transactions) {
+    if (tx.status !== "active") continue; // Exclude returned items from product-level totals
     const key = String(tx.product_id);
     if (!productMap[key]) {
       productMap[key] = { product_name: tx.product_name, totalQuantity: 0, totalProfit: 0 };
