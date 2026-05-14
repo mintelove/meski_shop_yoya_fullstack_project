@@ -260,7 +260,7 @@ async function buildProfitData(query, user) {
       salesman: s.salesman_id?.name || "N/A",
       salesman_id: s.salesman_id?._id || s.salesman_id,
       date: s.createdAt,
-      editedOnce: !!s.editedOnce,
+      operationUsed: !!s.operationUsed,
       status: txStatus,
       adminMessage: s.adminMessage || "",
       minSellingPrice: s.product_id?.minSellingPrice || 0
@@ -547,7 +547,7 @@ router.get("/purchases", protect, authorize("salesman", "admin"), async (req, re
 });
 
 // ─── Return Items to Stock (1-hour limit for salesman) ────────────────────────
-router.post("/:id/return", protect, authorize("salesman", "admin"), async (req, res, next) => {
+router.post("/:id/return", protect, authorize("admin"), async (req, res, next) => {
   try {
     const sale = await Sale.findById(req.params.id);
     if (!sale) {
@@ -564,7 +564,7 @@ router.post("/:id/return", protect, authorize("salesman", "admin"), async (req, 
       if (!isOwner) {
         return res.status(403).json({ success: false, message: "You can only return your own transactions." });
       }
-      if (sale.editedOnce) {
+      if (sale.operationUsed) {
         return res.status(403).json({ success: false, message: "You have already edited this transaction." });
       }
       const diffMs = Date.now() - new Date(sale.createdAt).getTime();
@@ -581,7 +581,7 @@ router.post("/:id/return", protect, authorize("salesman", "admin"), async (req, 
     }
 
     sale.status = "returned";
-    sale.editedOnce = true;
+    sale.operationUsed = true;
     await sale.save();
 
     emitStockUpdate({ type: "sale-returned", saleId: sale._id, productId: sale.product_id });
@@ -614,11 +614,11 @@ router.put("/:id", protect, authorize("salesman", "admin"), async (req, res, nex
       }
 
       // Salesman: check if already edited once
-      if (sale.editedOnce) {
+      if (sale.operationUsed) {
         return res.status(403).json({
           success: false,
           message: "You have already edited this transaction once.",
-          editedOnce: true
+          operationUsed: true
         });
       }
 
@@ -687,7 +687,7 @@ router.put("/:id", protect, authorize("salesman", "admin"), async (req, res, nex
 
     // Mark as edited for salesman (one-time edit rule)
     if (!isAdmin) {
-      sale.editedOnce = true;
+      sale.operationUsed = true;
     }
 
     await sale.save();

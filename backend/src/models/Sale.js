@@ -10,7 +10,7 @@ const saleSchema = new mongoose.Schema(
     total_price: { type: Number, required: true, min: 0 },
     currency: { type: String, default: "ETB", enum: ["ETB", "USD"] },
     salesman_id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    editedOnce: { type: Boolean, default: false },
+    operationUsed: { type: Boolean, default: false },
     status: { type: String, enum: ["active", "returned", "reversed"], default: "active" },
     adminMessage: { type: String, default: "" }
   },

@@ -36,6 +36,11 @@ router.post("/", protect, authorize("salesman", "admin"), async (req, res, next)
       return res.status(400).json({ success: false, message: "Transaction is already returned/reversed." });
     }
 
+    // Check if operation already used
+    if (sale.operationUsed) {
+      return res.status(403).json({ success: false, message: "Action already used for this transaction." });
+    }
+
     // PRICE VALIDATION: newPrice must be >= current selling price
     if (type === "price_change") {
       if (Number(newPrice) < sale.unit_price) {
@@ -50,11 +55,10 @@ router.post("/", protect, authorize("salesman", "admin"), async (req, res, next)
     const existing = await EditRequest.findOne({
       transaction_id: transactionId,
       salesman_id: req.user._id,
-      type,
       status: "pending"
     });
     if (existing) {
-      return res.status(400).json({ success: false, message: `You already have a pending ${type} request for this transaction.` });
+      return res.status(400).json({ success: false, message: "You already have a pending request for this transaction." });
     }
 
     const editReq = await EditRequest.create({
@@ -64,6 +68,12 @@ router.post("/", protect, authorize("salesman", "admin"), async (req, res, next)
       reason: reason.trim(),
       newPrice: type === "price_change" ? Number(newPrice) : undefined
     });
+
+    // Lock the transaction — operationUsed = true on request submission
+    sale.operationUsed = true;
+    await sale.save();
+
+    emitStockUpdate({ type: "request-created", saleId: sale._id });
 
     return res.status(201).json({ success: true, editRequest: editReq });
   } catch (error) {
@@ -130,7 +140,6 @@ router.patch("/:id", protect, authorize("admin"), async (req, res, next) => {
             await product.save();
           }
           sale.status = "returned";
-          sale.editedOnce = false;
           sale.adminMessage = "";
           await sale.save();
 
@@ -141,7 +150,6 @@ router.patch("/:id", protect, authorize("admin"), async (req, res, next) => {
         if (sale.status === "active" && editReq.newPrice) {
           sale.unit_price = editReq.newPrice;
           sale.total_price = Number((sale.unit_price * sale.quantity).toFixed(2));
-          sale.editedOnce = false;
           sale.adminMessage = "";
           await sale.save();
 

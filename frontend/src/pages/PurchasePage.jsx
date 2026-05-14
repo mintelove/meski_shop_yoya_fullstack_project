@@ -48,7 +48,7 @@ export const PurchasePage = () => {
   const [editForm, setEditForm] = useState({ sellingPrice: "" });
   const [editError, setEditError] = useState("");
 
-  // Request modal
+  // Request modal (cashback / price change)
   const [reqTx, setReqTx] = useState(null);
   const [reqType, setReqType] = useState("cashback");
   const [reqReason, setReqReason] = useState("");
@@ -58,7 +58,6 @@ export const PurchasePage = () => {
 
   // Admin: edit requests
   const [editRequests, setEditRequests] = useState([]);
-
   // Salesman: own edit requests (for button state)
   const [myRequests, setMyRequests] = useState([]);
 
@@ -99,11 +98,10 @@ export const PurchasePage = () => {
 
   useSocket("stock:update", () => { fetchData(); fetchEditRequests(); fetchMyRequests(); });
 
-  // Get the latest request status for a transaction
+  // Get the latest request for a transaction
   const getRequestStatus = (txId) => {
     const reqs = myRequests.filter(r => String(r.transaction_id?._id || r.transaction_id) === String(txId));
     if (reqs.length === 0) return null;
-    // Sort by createdAt desc, return latest
     const sorted = [...reqs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return sorted[0];
   };
@@ -138,32 +136,22 @@ export const PurchasePage = () => {
       .catch(() => {});
   };
 
-  // Permission helpers
-  const canEditOrReturn = (tx) => {
+  // Permission: can salesman edit price (within 1hr, operationUsed=false)
+  const canEditPrice = (tx) => {
     if (tx.status !== "active") return false;
     if (isAdmin) return true;
     const isOwner = String(tx.salesman_id) === String(user?._id);
-    if (!isOwner || tx.editedOnce) return false;
+    if (!isOwner || tx.operationUsed) return false;
     return (Date.now() - new Date(tx.date).getTime()) <= ONE_HOUR;
   };
 
-  const canRequest = (tx) => {
+  // Permission: can salesman send request (operationUsed=false, after 1hr OR within 1hr for return)
+  const canSendRequest = (tx) => {
     if (tx.status !== "active") return false;
     if (isAdmin) return false;
     const isOwner = String(tx.salesman_id) === String(user?._id);
-    if (!isOwner) return false;
-    return tx.editedOnce || (Date.now() - new Date(tx.date).getTime()) > ONE_HOUR;
-  };
-
-  // Return items
-  const onReturn = async (tx) => {
-    if (!confirm("Return all items from this transaction to stock?")) return;
-    try {
-      await api.post(`/sales/${tx._id}/return`);
-      fetchData();
-    } catch (err) {
-      alert(err.response?.data?.message || "Return failed.");
-    }
+    if (!isOwner || tx.operationUsed) return false;
+    return true; // Can always request if operationUsed=false
   };
 
   // Edit price
@@ -178,7 +166,7 @@ export const PurchasePage = () => {
     }
   };
 
-  // Submit request
+  // Submit request (cashback = return request, price_change)
   const onReqSubmit = async () => {
     setReqError(""); setReqSuccess("");
     try {
@@ -187,6 +175,7 @@ export const PurchasePage = () => {
       await api.post("/edit-requests", body);
       setReqSuccess("Request submitted!");
       fetchMyRequests();
+      fetchData();
       setTimeout(() => { setReqTx(null); setReqReason(""); setReqNewPrice(""); setReqSuccess(""); }, 1500);
     } catch (err) {
       setReqError(err.response?.data?.message || "Request failed.");
@@ -208,27 +197,68 @@ export const PurchasePage = () => {
 
   const pendingRequests = editRequests.filter(r => r.status === "pending");
 
-  // Render request button for a transaction
-  const renderRequestButton = (tx) => {
-    const latestReq = getRequestStatus(tx._id);
-
-    // Pending request exists → show disabled button
-    if (latestReq && latestReq.status === "pending") {
+  // Render action buttons for a transaction
+  const renderActions = (tx) => {
+    // Admin always gets edit
+    if (isAdmin) {
       return (
-        <button className="btn" disabled style={{
-          padding: "0.2rem 0.5rem", fontSize: "0.7rem", background: "#94a3b8",
-          cursor: "not-allowed", opacity: 0.7, lineHeight: "1.2"
-        }}>
-          ⏳ Requested, please wait until approved by admin
+        <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
+          onClick={() => { setEditTx(tx); setEditForm({ sellingPrice: tx.sellingPrice }); setEditError(""); }}>
+          ✏️ Edit
         </button>
       );
     }
 
-    // Default: show send request button
+    // Not owner
+    const isOwner = String(tx.salesman_id) === String(user?._id);
+    if (!isOwner || tx.status !== "active") return null;
+
+    // Operation already used — check request status
+    if (tx.operationUsed) {
+      const latestReq = getRequestStatus(tx._id);
+      if (latestReq && latestReq.status === "pending") {
+        return (
+          <span style={{
+            display: "inline-block", padding: "0.2rem 0.5rem", fontSize: "0.7rem",
+            color: "#f59e0b", fontWeight: 600, lineHeight: "1.3"
+          }}>
+            ⏳ Requested, please wait until approved by admin
+          </span>
+        );
+      }
+      return (
+        <span style={{
+          display: "inline-block", padding: "0.2rem 0.5rem", fontSize: "0.72rem",
+          color: "#94a3b8", fontWeight: 600
+        }}>
+          🔒 Action already used
+        </span>
+      );
+    }
+
+    const withinHour = (Date.now() - new Date(tx.date).getTime()) <= ONE_HOUR;
+
+    // Within 1 hour: show Edit Price + Return (as request)
+    if (withinHour) {
+      return (
+        <>
+          <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", marginRight: "0.25rem" }}
+            onClick={() => { setEditTx(tx); setEditForm({ sellingPrice: tx.sellingPrice }); setEditError(""); }}>
+            ✏️ Edit Price
+          </button>
+          <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", background: "#f59e0b" }}
+            onClick={() => { setReqTx(tx); setReqType("cashback"); setReqReason(""); setReqNewPrice(""); setReqError(""); setReqSuccess(""); }}>
+            ↩️ Return
+          </button>
+        </>
+      );
+    }
+
+    // After 1 hour: show Request button
     return (
       <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", background: "#8b5cf6" }}
         onClick={() => { setReqTx(tx); setReqType("cashback"); setReqReason(""); setReqNewPrice(""); setReqError(""); setReqSuccess(""); }}>
-        📝 Request
+        📝 Send Request
       </button>
     );
   };
@@ -385,19 +415,7 @@ export const PurchasePage = () => {
                     )}
                   </td>
                   <td style={{ whiteSpace: "nowrap" }}>
-                    {canEditOrReturn(tx) && (
-                      <>
-                        <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", marginRight: "0.25rem" }}
-                          onClick={() => { setEditTx(tx); setEditForm({ sellingPrice: tx.sellingPrice }); setEditError(""); }}>
-                          ✏️ Edit Price
-                        </button>
-                        <button className="btn" style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem", background: "#f59e0b" }}
-                          onClick={() => onReturn(tx)}>
-                          ↩️ Return
-                        </button>
-                      </>
-                    )}
-                    {canRequest(tx) && renderRequestButton(tx)}
+                    {renderActions(tx)}
                   </td>
                 </tr>
               ))
